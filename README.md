@@ -1,6 +1,9 @@
 # Lost & Found App
 ## CSE3311 Project
 
+- Project Vision
+ - Our group, Group-7, has developed a concept for a university-specific lost and found app. Similar to Craigslist, this app aims to provide an easy and convenient way for students to locate their lost items. 
+
 - Goals
 
   - University-based lost and found tool.
