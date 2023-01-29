@@ -52,7 +52,7 @@
   - Bug Tracking – Github
   - Project Management tool – Trello
 
-- Target Users
+- Target Users and customers
 
   - Students who attend UTA
 
