@@ -48,9 +48,9 @@
 
 - Software Tools
 
-  - Build Tools- Unknown
+  - Build Tools- npm, Node.Js
   - Source Control – Git
-  - Debugger – Unknown
+  - Debugger – IDE built in
   - Profiler- Built-in React Native Profiler
   - Bug Tracking – Github
   - Project Management tool – Trello
