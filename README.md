@@ -32,15 +32,13 @@
     - Using School SSO to maintain identification/integrity
     - Not showing lost items publicly w/o proper find requirements
     - An abuse checking system analyzing user patterns
-  - Deciding when to show Found Items based off a Lost Request.
-  - Figuring out what to with unclaimed items
+  - Our team members are unfamiliar with the frameworks we're going to use
+  - Figuring out UTA's SSO issue.
 
 - Competition
 
   - UTA Lost Found Service
-  - Life360 (Tile)
-  - Apple (AirTags)
-
+  - LoFo
 - Dev Environment
 
   - React Native
