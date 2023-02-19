@@ -7,7 +7,7 @@ import React from 'react';
 //import all the components we are going to use
 import { StyleSheet, Text, View, SafeAreaView, Button } from 'react-native';
 
-const Login = () => {
+const Login = ({navigation}) => {
   const onPressLearnMore = () => {
     //For generating alert on buttton click
     alert('Hello');
@@ -20,6 +20,12 @@ const Login = () => {
         <Text>Button Example</Text>
         {/* Button whith handler function named onPressLearnMore*/}
         <Button onPress={onPressLearnMore} title="Click Me" color="#841584" />
+        <Button
+          title="Go to Home"
+          onPress={() =>
+            navigation.navigate('Home')
+          }
+        />
       </View>
     </SafeAreaView>
   );
