@@ -1,15 +1,27 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
-import SignUp from './Components/SignUp'
+import SignUp from './Components/SignUp';
 import { Divider } from '@rneui/themed';
+import * as React from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import Home from './Components/Home';
+import Login from './Components/Login';
 
-export default function App() {
+const Stack = createNativeStackNavigator();
 
+ const App = () => {
   return (
-    <View style={styles.container}>
-      <SignUp/> 
-    </View>
+    <NavigationContainer>
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Signup"
+        component={Login}
+        options={{title: 'Welcome to Founday'}}
+      />
+      <Stack.Screen name="Home" component={Home} />
+    </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
@@ -21,3 +33,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+
+export default App;
