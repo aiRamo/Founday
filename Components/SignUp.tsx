@@ -36,8 +36,12 @@ class SignUp extends Component<MyComponentProps, MyComponentStates> {
     if (!(this.state.firstName.length > 0 && this.state.lastName.length > 0 && this.state.email.length > 0 && this.state.password.length > 0)){
         alert('Please fill out all boxes.');
         return;
+    }
+    else if (!this.state.email.endsWith("uta.edu")) {
+        alert('please use a UTA specific email.')
+        return;
     } 
-    if (this.state.password != this.state.confirmPassword){
+    else if (this.state.password != this.state.confirmPassword){
         alert('Password fields do not match.');
         return;
     } else {
@@ -124,6 +128,7 @@ class SignUp extends Component<MyComponentProps, MyComponentStates> {
     },
     signUpButton: {
         width: width * 0.9,
+        maxWidth: 600,
         height: height * 0.05,
         borderRadius: 15,
         backgroundColor: '#687089',
@@ -160,4 +165,6 @@ class SignUp extends Component<MyComponentProps, MyComponentStates> {
   });
 }
   
-export default SignUp
+//export default withNavigation(SignUp);
+
+export default SignUp;
