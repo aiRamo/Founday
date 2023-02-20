@@ -91,7 +91,7 @@ class SignUp extends Component<MyComponentProps, MyComponentStates> {
                 placeholder='Confirm Password' placeholderTextColor={'#9DA2B2'} style={this.styles.textBoxes} secureTextEntry={true}></TextInput>
 
             <View style={this.styles.signUpButton}>
-                <Button onPress={this.createUser} title = 'Sign Up' color={'#ffffff'}/>
+                <Button onPress={this.createUser} title = 'Sign Up' color={'#687089'}/>
             </View>
             
             <View style ={this.styles.signInRedirect}>
@@ -125,13 +125,14 @@ class SignUp extends Component<MyComponentProps, MyComponentStates> {
     signUpButton: {
         width: width * 0.9,
         height: height * 0.05,
-        borderRadius: 25,
+        borderRadius: 15,
         backgroundColor: '#687089',
         borderColor: '#687089',
         color: '#ffffff',
         position: 'absolute',
         bottom: '12.5%',
-        
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     divider: {
         width: width * 1,
