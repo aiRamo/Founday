@@ -1,8 +1,7 @@
 import React, {useState} from 'react';
-import { StyleSheet, Text, View, Image, Button, TouchableOpacity, FlatList} from 'react-native';
+import { StyleSheet, Text, View, Image, Button, TouchableOpacity, FlatList, Pressable} from 'react-native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { AntDesign } from '@expo/vector-icons';
 import Settings  from './Settings';
 import LostReport from './LostReport';
 
@@ -33,20 +32,15 @@ const DATA = [
     </View>
   );
 
-  const Stack = createNativeStackNavigator();
 
  const Home = ({navigation}) => {
     const [count, setCount] = useState(0);
     const onPress = () => setCount(prevCount => prevCount + 1);
-    const goSettings = () => < Settings navigation={undefined} />
-
+    
   return (
     <View style={styles.wrapper}>
         <View style={styles.container}>
             <View style={styles.vertical}>
-                <TouchableOpacity style={styles.button} onPress={goSettings}>
-                    <Text>Settings</Text>
-                </TouchableOpacity>
                 <Image source={{uri: 'https://randomuser.me/api/portraits/men/1.jpg'}} style={styles.img}/>
                 <Text>Names: </Text>
                 <Text>Email: </Text>
@@ -69,7 +63,16 @@ const DATA = [
         </View>
 
         <View>
-            <Text> Create new Lost Item Report</Text>
+            <Text> Create new Lost Item Report 
+              <AntDesign 
+                name="pluscircle" 
+                size={30} 
+                color="blue" 
+                style={{margin: 15, padding: 10,}}
+                onPress={() =>
+                  navigation.navigate('Lost Report')
+                }/>
+            </Text>
             <FlatList
                 horizontal ={true}
                 data={DATA}
@@ -79,7 +82,15 @@ const DATA = [
         </View>
 
         <View>
-            <Text> Create new Found Item Report</Text>
+            <Text> Create new Found Item Report
+              <AntDesign 
+                name="pluscircle" 
+                size={30} 
+                color="blue" 
+                onPress={() =>
+                  navigation.navigate('Found Report')
+                }/>
+            </Text>
             <FlatList
                 horizontal ={true}
                 data={DATA}
@@ -87,22 +98,14 @@ const DATA = [
                 keyExtractor={item => item.id}
             />
         </View>
-        <Button onPress={() => navigation.navigate('User Settings')} title="Settings" color="#841584" />
-        <Button
-          title="Create Lost item Report"
-          onPress={() =>
-            navigation.navigate('Lost Report')
-          }
-        />
-        <Button
-          title="Create Found item Report"
-          onPress={() =>
-            navigation.navigate('Found Report')
-          }
-          color="#841584"
-        />
-    
+        
 
+        <Pressable style={styles.submitButton} onPress={() => navigation.navigate('User Settings')}>
+                <Text style={{fontSize: 16, lineHeight: 21, letterSpacing: 0.25,
+                    color: 'white',}}>Settings</Text>
+        </Pressable>
+        
+  
     </View>
 
     
@@ -148,6 +151,16 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 15,
+  },
+  submitButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: 'black',
+    marginTop: 20,
   },
 });
 
