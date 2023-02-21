@@ -22,11 +22,11 @@ const Stack = createNativeStackNavigator();
         component={Login}
         options={{title: 'Welcome to Founday'}}
       />
-      <Stack.Screen name="Home" component={Home} />
-      <Stack.Screen name="Lost Report" component={LostReport} />
-      <Stack.Screen name="Found Report" component={FoundReport} />
-      <Stack.Screen name="SignUp" component={SignUp} />
-      <Stack.Screen name="User Settings" component={Settings} />
+      <Stack.Screen name="Home" component={Home} options={{headerShown: false}} />
+      <Stack.Screen name="Lost Report" component={LostReport} options={{headerShown: false}}/>
+      <Stack.Screen name="Found Report" component={FoundReport} options={{headerShown: false}}/>
+      <Stack.Screen name="SignUp" component={SignUp} options={{headerShown: false}}/>
+      <Stack.Screen name="User Settings" component={Settings} options={{headerShown: false}}/>
     </Stack.Navigator>
     </NavigationContainer>
   );
