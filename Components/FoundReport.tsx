@@ -4,10 +4,10 @@ import Home from './Home';
 
 
 
- const LostReport = ({navigation}) => {
+ const FoundReport = ({navigation}) => {
   return (
     <View>
-        <Text>Create Lost Item Report</Text>
+        <Text>Create Found Item Report</Text>
     </View>
   );
 }
@@ -22,4 +22,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default LostReport;
+export default FoundReport;
