@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
 import { ref, set, push } from 'firebase/database';
-import { db } from './firebaseConfig';
+import { firebase } from './firebaseConfig';
 import { StyleSheet, TextInput, View, Dimensions, Text, Button} from 'react-native';
 import { Divider, Header} from '@rneui/themed';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { TouchableOpacity } from 'react-native';
+
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 
 const { width, height } = Dimensions.get('window');
+const db = firebase.database();
+const auth = getAuth();
 
 interface MyComponentProps {}
 
@@ -29,8 +34,8 @@ class SignUp extends Component<MyComponentProps, MyComponentStates> {
     };
   }
 
-  //createUser() checks fileds for correctness then inserts the user's credentials into Firebase via push(ref(), {...})
-  createUser = () => {
+  //createUser() checks fields for correctness then inserts the user's credentials into Firebase via push(ref(), {...})
+  createUser = async () => {
     const path = 'users/';
 
     if (!(this.state.firstName.length > 0 && this.state.lastName.length > 0 && this.state.email.length > 0 && this.state.password.length > 0)){
@@ -45,19 +50,29 @@ class SignUp extends Component<MyComponentProps, MyComponentStates> {
         alert('Password fields do not match.');
         return;
     } else {
-        push(ref(db, path), {
 
-            firstName: this.state.firstName,
-            lastName: this.state.lastName,
-            email: this.state.email,
-            password: this.state.password
-    
-        }).then(() => {
-            alert('data uploaded')
-        })
-            .catch((error) => {
-            alert(error);
-            });
+        try {
+            const {user} = await createUserWithEmailAndPassword(auth, this.state.email, this.state.password);
+            const uid = user.uid;
+            const path = 'users/' + uid;
+
+            const userObject = {
+                firstName: this.state.firstName,
+                lastName: this.state.lastName,
+                email: this.state.email,
+                password: this.state.password
+            };
+
+            if (!user.emailVerified) {
+            await sendEmailVerification(user, { url: 'https://typescriptexample-112dd.web.app' });
+            alert('Verification email sent.');
+            }
+
+            await set(ref(db, path), userObject);
+          } catch (error) {
+            alert(error)
+            return;
+          }
     }
 
   };
@@ -94,10 +109,12 @@ class SignUp extends Component<MyComponentProps, MyComponentStates> {
             <TextInput value={this.state.confirmPassword} onChangeText={(text) => this.setState({ confirmPassword: text })} 
                 placeholder='Confirm Password' placeholderTextColor={'#9DA2B2'} style={this.styles.textBoxes} secureTextEntry={true}></TextInput>
 
-            <View style={this.styles.signUpButton}>
-                <Button onPress={this.createUser} title = 'Sign Up' color={'#687089'}/>
-            </View>
-            
+            <TouchableOpacity onPress={this.createUser} style={this.styles.signUpButton}>
+                <View >
+                    <Text style={this.styles.signUpText}>Sign Up</Text>
+                </View>
+            </TouchableOpacity>
+
             <View style ={this.styles.signInRedirect}>
                 <Text style={this.styles.infoText}>Already have an account?</Text>
                 <Text style={this.styles.signInButton} onPress={this.redirectToSignIn}>Sign In</Text>
@@ -138,6 +155,12 @@ class SignUp extends Component<MyComponentProps, MyComponentStates> {
         bottom: '12.5%',
         alignItems: 'center',
         justifyContent: 'center',
+        padding: 10
+    },
+    signUpText: {
+        color: '#ffffff',
+        fontSize: 16,
+        fontWeight: '500',
     },
     divider: {
         width: width * 1,
@@ -164,7 +187,5 @@ class SignUp extends Component<MyComponentProps, MyComponentStates> {
     }
   });
 }
-  
-//export default withNavigation(SignUp);
 
 export default SignUp;
