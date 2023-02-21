@@ -6,7 +6,7 @@ import { Divider, Header} from '@rneui/themed';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native';
 
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 const { width, height } = Dimensions.get('window');
 const db = firebase.database();
@@ -17,15 +17,30 @@ const Login = ({navigation}) => {
   const [password, setPassword] = useState('');
 
   const loginUser = async () => {
-    if (!email.endsWith("uta.edu")) {
-      alert('Please use your UTA specific email.')
+    if (email.length == 0) {
+      alert('Please Enter Email.')
       return;
     } 
     else if (password.length == 0){
         alert('Please Enter Password.');
         return;
     }
-    navigation.navigate('Home')
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+
+        const user = userCredential.user;
+        navigation.navigate('Home');
+        alert('Signed in.');
+
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        alert(errorMessage);
+      })
+
+    
   }
   
   const redirectToSignUp = () => {
