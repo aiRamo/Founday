@@ -12,7 +12,7 @@ const { width, height } = Dimensions.get('window');
 const db = firebase.database();
 const auth = getAuth();
 
-const SignUp = () =>  {
+const SignUp = ({navigation}) =>  {
 
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -20,18 +20,17 @@ const SignUp = () =>  {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [email, setEmail] = useState('');
 
-  //createUser() checks fields for correctness then inserts the user's credentials into Firebase via push(ref(), {...})
-    const createUser = async () => {
-        const path = 'users/';
+    //createUser() checks fields for correctness then inserts the user's credentials into Firebase via push(ref(), {...})
+    const createUser = async ({navigation}) => {
 
         if (!(firstName.length > 0 && lastName.length > 0 && email.length > 0 && password.length > 0)){
             alert('Please fill out all boxes.');
             return;
         }
-        else if (!email.endsWith("uta.edu")) {
-            alert('please use a UTA specific email.')
-            return;
-        } 
+        //else if (!email.endsWith("uta.edu")) {
+        //    alert('please use a UTA specific email.')
+        //    return;
+        //} 
         else if (password != confirmPassword){
             alert('Password fields do not match.');
             return;
@@ -50,9 +49,15 @@ const SignUp = () =>  {
                 };
 
                 if (!user.emailVerified) {
-                await sendEmailVerification(user, { url: 'https://typescriptexample-112dd.web.app' });
-                alert('Verification email sent.');
+                    firebase.auth().onAuthStateChanged(function(user) {
+                        if (user) {
+                            user.sendEmailVerification(); 
+                        }
+                      });
+                alert('Verification email sent.'); 
                 }
+
+                navigation.navigate('Login');
 
                 await set(ref(db, path), userObject);
             } catch (error) {
@@ -60,12 +65,9 @@ const SignUp = () =>  {
                 return;
             }
         }
-
+        return
   };
 
-  const redirectToSignIn = () => {
-    alert('WIP, will redirect to sign in page.');
-  }
 
     return (
     <SafeAreaProvider>
@@ -92,7 +94,7 @@ const SignUp = () =>  {
             <TextInput value={confirmPassword} onChangeText={(text) => setConfirmPassword(text)} 
                 placeholder='Confirm Password' placeholderTextColor={'#9DA2B2'} style={styles.textBoxes} secureTextEntry={true}></TextInput>
 
-            <TouchableOpacity onPress={createUser} style={styles.signUpButton}>
+            <TouchableOpacity onPress={ () => {createUser({navigation});}} style={styles.signUpButton}>
                 <View >
                     <Text style={styles.signUpText}>Sign Up</Text>
                 </View>
@@ -100,7 +102,7 @@ const SignUp = () =>  {
 
             <View style ={styles.signInRedirect}>
                 <Text style={styles.infoText}>Already have an account?</Text>
-                <Text style={styles.signInButton} onPress={redirectToSignIn}>Sign In</Text>
+                <Text style={styles.signInButton} onPress={() => navigation.navigate('Login')}>Sign In</Text>
             </View>
         </View>
     </SafeAreaProvider>

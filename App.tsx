@@ -8,6 +8,8 @@ import Login from './Components/Login';
 import LostReport from './Components/LostReport';
 import Settings from './Components/Settings';
 import FoundReport from './Components/FoundReport';
+import { SignInMethod } from 'firebase/auth';
+import SignUp from './Components/SignUp';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,14 +18,15 @@ const Stack = createNativeStackNavigator();
     <NavigationContainer>
     <Stack.Navigator>
       <Stack.Screen
-        name="Signup/Login"
+        name="Login"
         component={Login}
         options={{title: 'Welcome to Founday'}}
       />
-      <Stack.Screen name="Home" component={Home} />
-      <Stack.Screen name="Lost Report" component={LostReport} />
-      <Stack.Screen name="Found Report" component={FoundReport} />
-      <Stack.Screen name="User Settings" component={Settings} />
+      <Stack.Screen name="Home" component={Home} options={{headerShown: false}} />
+      <Stack.Screen name="Lost Report" component={LostReport} options={{headerShown: false}}/>
+      <Stack.Screen name="Found Report" component={FoundReport} options={{headerShown: false}}/>
+      <Stack.Screen name="SignUp" component={SignUp} options={{headerShown: false}}/>
+      <Stack.Screen name="User Settings" component={Settings} options={{headerShown: false}}/>
     </Stack.Navigator>
     </NavigationContainer>
   );

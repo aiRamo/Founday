@@ -31,7 +31,6 @@ const Login = ({navigation}) => {
   const redirectToSignUp = () => {
     alert('WIP, will redirect to sign in page.');
   }
-
   return (
     <SafeAreaProvider>
         <Header 
