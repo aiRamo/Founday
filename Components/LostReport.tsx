@@ -7,11 +7,13 @@ import UploadImage from './utilities/UploadImage';
 
 
  const LostReport = ({navigation}) => {
-    const [text, onChangeText] = React.useState('type text');
+    const [itemDescription, onChangeDescText] = React.useState('description');
+    const [itemCategory, onChangeCatText] = React.useState('category');
+    const [itemLocation, onChangeLocText] = React.useState('i.e. NH');
     const [selectedDate, setSelectedDate] = React.useState('');
     const onPressLearnMore = () => {
-        //For generating alert on buttton click
-        alert('Submitted..');
+        //go back to home after submitting created report
+        navigation.navigate('Home');
       };
   return (
     <View>
@@ -23,8 +25,8 @@ import UploadImage from './utilities/UploadImage';
                 <Text style={{marginTop: 5, marginLeft: 5,}}>Item Description</Text>
                 <TextInput
                     style={styles.input}
-                    onChangeText={onChangeText}
-                    value={text}
+                    onChangeText={onChangeDescText}
+                    value={itemDescription}
                 />
             </View>
 
@@ -33,8 +35,8 @@ import UploadImage from './utilities/UploadImage';
                 <Text style={{marginTop: 5, marginLeft: 5,}}>Category</Text>
                 <TextInput
                     style={styles.input}
-                    onChangeText={onChangeText}
-                    value={text}
+                    onChangeText={onChangeCatText}
+                    value={itemCategory}
                 />
             </View>
                     
@@ -42,8 +44,8 @@ import UploadImage from './utilities/UploadImage';
                 <Text style={{marginTop: 5, marginLeft: 5,}}>Location</Text>
                 <TextInput
                     style={styles.input}
-                    onChangeText={onChangeText}
-                    value={text}
+                    onChangeText={onChangeLocText}
+                    value={itemLocation}
                 />
             </View>
             <View>
