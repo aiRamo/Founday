@@ -13,7 +13,7 @@ import { StyleSheet, Text, View, Image, Button, TouchableOpacity } from 'react-n
             <Button
                 title="Logout"
                 onPress={() =>
-                    navigation.navigate('Signup/Login')}
+                    navigation.navigate('Login')}
             />
         </View>
 

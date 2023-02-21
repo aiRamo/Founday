@@ -23,10 +23,10 @@ const Stack = createNativeStackNavigator();
         options={{title: 'Welcome to Founday'}}
       />
       <Stack.Screen name="Home" component={Home} options={{headerShown: false}} />
-      <Stack.Screen name="Lost Report" component={LostReport} options={{headerShown: false}}/>
-      <Stack.Screen name="Found Report" component={FoundReport} options={{headerShown: false}}/>
+      <Stack.Screen name="Lost Report" component={LostReport}/>
+      <Stack.Screen name="Found Report" component={FoundReport}/>
       <Stack.Screen name="Sign Up" component={SignUp} options={{headerShown: false}}/>
-      <Stack.Screen name="User Settings" component={Settings} options={{headerShown: false}}/>
+      <Stack.Screen name="User Settings" component={Settings}/>
     </Stack.Navigator>
     </NavigationContainer>
   );
