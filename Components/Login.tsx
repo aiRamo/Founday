@@ -29,7 +29,7 @@ const Login = ({navigation}) => {
   }
   
   const redirectToSignUp = () => {
-    alert('WIP, will redirect to sign in page.');
+    navigation.navigate('Sign Up');
   }
   return (
     <SafeAreaProvider>
