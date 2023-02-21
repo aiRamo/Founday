@@ -27,10 +27,6 @@ const SignUp = ({navigation}) =>  {
             alert('Please fill out all boxes.');
             return;
         }
-        //else if (!email.endsWith("uta.edu")) {
-        //    alert('please use a UTA specific email.')
-        //    return;
-        //} 
         else if (password != confirmPassword){
             alert('Password fields do not match.');
             return;
