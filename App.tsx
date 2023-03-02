@@ -29,7 +29,7 @@ const Stack = createNativeStackNavigator();
           headerStyle: styles.header,
           headerTitleStyle: styles.headerText}}
       />
-      <Stack.Screen name="Home" component={Home} options={{title: 'Homepage', }}/>
+      <Stack.Screen name="Home" component={Home} options={{title: 'Homepage', headerBackVisible: false}}/>
       <Stack.Screen name="Lost Report" component={LostReport} options={{title: 'Lost Item Report'}}/>
       <Stack.Screen name="Found Report" component={FoundReport} options={{title: 'Found Item Report'}}/>
       <Stack.Screen name="Sign Up" component={SignUp} options={{headerShown: false}}/>
