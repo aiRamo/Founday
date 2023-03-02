@@ -36,6 +36,7 @@ const DATA = [
  const Home = ({navigation}) => {
     const [count, setCount] = useState(0);
     const onPress = () => setCount(prevCount => prevCount + 1);
+
     
   return (
     <View style={styles.wrapper}>
@@ -101,7 +102,7 @@ const DATA = [
         
 
         <Pressable style={styles.submitButton} onPress={() => navigation.navigate('User Settings')}>
-                <Text style={{fontSize: 16, lineHeight: 21, letterSpacing: 0.25,
+                <Text style={{fontSize: 16, lineHeight: 21, letterSpacing: 0.25, fontWeight: 600,
                     color: 'white',}}>Settings</Text>
         </Pressable>
         
@@ -160,7 +161,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 4,
     elevation: 3,
-    backgroundColor: 'black',
+    backgroundColor: '#687089',
     marginTop: 20,
   },
 });

@@ -1,7 +1,7 @@
 import React, { Component, useState } from 'react';
 import { ref, set, push } from 'firebase/database';
 import { firebase } from './firebaseConfig';
-import { StyleSheet, TextInput, View, Dimensions, Text, Button, SafeAreaView} from 'react-native';
+import { StyleSheet, TextInput, View, Dimensions, Text, Image} from 'react-native';
 import { Divider, Header} from '@rneui/themed';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native';
@@ -48,13 +48,14 @@ const Login = ({navigation}) => {
   }
   return (
     <SafeAreaProvider>
-        <Header 
-            centerComponent={{ text: 'Login', style: styles.headingText }}
-            backgroundColor={'#687089'}/>
-
         <View style={styles.container}>
 
             <Divider inset={true} insetType="middle" style = {styles.divider} color={'#EFF1F8'}/>
+
+            <Image 
+                source = {require('../assets/FoundayLogo.png')}
+                style={styles.logo}
+            />
 
             <TextInput value={email} onChangeText={(text) => setEmail(text)} 
                 placeholder='Email' placeholderTextColor={'#9DA2B2'} style={styles.textBoxes}></TextInput>
@@ -83,6 +84,14 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
       
+  },
+  logo: {
+    width: width * 0.8,
+    height: height * 0.2,
+    marginBottom: 100,
+    marginTop: -25,
+    marginLeft: 5,
+    resizeMode: 'contain',
   },
   textBoxes: {
       width: width * 0.9,

@@ -69,7 +69,9 @@ const SignUp = ({navigation}) =>  {
     <SafeAreaProvider>
         <Header 
             centerComponent={{ text: 'Sign Up', style: styles.headingText }}
-            backgroundColor={'#687089'}/>
+            backgroundColor={'#687089'}
+            />
+            
 
         <View style={styles.container}>
 

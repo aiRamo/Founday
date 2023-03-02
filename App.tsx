@@ -16,17 +16,24 @@ const Stack = createNativeStackNavigator();
  const App = () => {
   return (
     <NavigationContainer>
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: styles.header,
+        headerTintColor: '#fff'
+      }}>
       <Stack.Screen
         name="Login"
         component={Login}
-        options={{title: 'Welcome to Founday'}}
+        options={{
+          title: 'Login',
+          headerStyle: styles.header,
+          headerTitleStyle: styles.headerText}}
       />
-      <Stack.Screen name="Home" component={Home} options={{headerShown: false}} />
-      <Stack.Screen name="Lost Report" component={LostReport}/>
-      <Stack.Screen name="Found Report" component={FoundReport}/>
+      <Stack.Screen name="Home" component={Home} options={{title: 'Homepage', }}/>
+      <Stack.Screen name="Lost Report" component={LostReport} options={{title: 'Lost Item Report'}}/>
+      <Stack.Screen name="Found Report" component={FoundReport} options={{title: 'Found Item Report'}}/>
       <Stack.Screen name="Sign Up" component={SignUp} options={{headerShown: false}}/>
-      <Stack.Screen name="User Settings" component={Settings}/>
+      <Stack.Screen name="User Settings" component={Settings} options={{title: 'Settings'}}/>
     </Stack.Navigator>
     </NavigationContainer>
   );
@@ -39,6 +46,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  header: {
+    backgroundColor: "#687089",
+  },
+  headerText: {
+    fontWeight: 'bold',
+    color: '#ffffff',
+  }
 });
 
 

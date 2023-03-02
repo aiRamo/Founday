@@ -6,9 +6,6 @@ import { StyleSheet, Text, View, Image, Button, TouchableOpacity } from 'react-n
   return (
     <View style={styles.container}>
         <View style={styles.vertical}>
-            <TouchableOpacity style={styles.button} >
-                <Text>Settings</Text>
-            </TouchableOpacity>
             <Image source={{uri: 'https://randomuser.me/api/portraits/men/1.jpg'}} style={styles.img}/>
             <Button
                 title="Logout"
