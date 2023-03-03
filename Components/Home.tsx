@@ -99,14 +99,6 @@ const DATA = [
                 keyExtractor={item => item.id}
             />
         </View>
-        
-
-        <Pressable style={styles.submitButton} onPress={() => navigation.navigate('User Settings')}>
-                <Text style={{fontSize: 16, lineHeight: 21, letterSpacing: 0.25, fontWeight: 600,
-                    color: 'white',}}>Settings</Text>
-        </Pressable>
-        
-  
     </View>
 
     
@@ -153,16 +145,6 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 15,
-  },
-  submitButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 4,
-    elevation: 3,
-    backgroundColor: '#687089',
-    marginTop: 20,
   },
 });
 

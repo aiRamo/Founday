@@ -1,7 +1,7 @@
 import React, { Component, useState } from 'react';
 import { ref, set, push } from 'firebase/database';
 import { firebase } from './firebaseConfig';
-import { StyleSheet, TextInput, View, Dimensions, Text, Button} from 'react-native';
+import { StyleSheet, TextInput, View, Dimensions, Text} from 'react-native';
 import { Divider, Header} from '@rneui/themed';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native';

@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, Dimensions, Image } from 'react-native';
 import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -8,10 +8,10 @@ import Login from './Components/Login';
 import LostReport from './Components/LostReport';
 import Settings from './Components/Settings';
 import FoundReport from './Components/FoundReport';
-import { SignInMethod } from 'firebase/auth';
 import SignUp from './Components/SignUp';
 
 const Stack = createNativeStackNavigator();
+const { width, height } = Dimensions.get('window');
 
  const App = () => {
   return (
@@ -29,7 +29,20 @@ const Stack = createNativeStackNavigator();
           headerStyle: styles.header,
           headerTitleStyle: styles.headerText}}
       />
-      <Stack.Screen name="Home" component={Home} options={{title: 'Homepage', headerBackVisible: false}}/>
+      <Stack.Screen name="Home" component={Home} 
+        options={({navigation}) => ({
+          title: 'Homepage', 
+          headerBackVisible: false, 
+          headerRight: () => (
+            <TouchableOpacity onPress={() => navigation.navigate('User Settings')} style = {styles.settingsClickOpacity}>
+              <Image
+                source={require('./assets/SettingsWheel.png')}
+                style={styles.settingsIcon}
+              />
+            </TouchableOpacity>
+          )
+        })}
+      />
       <Stack.Screen name="Lost Report" component={LostReport} options={{title: 'Lost Item Report'}}/>
       <Stack.Screen name="Found Report" component={FoundReport} options={{title: 'Found Item Report'}}/>
       <Stack.Screen name="Sign Up" component={SignUp} options={{headerShown: false}}/>
@@ -52,6 +65,15 @@ const styles = StyleSheet.create({
   headerText: {
     fontWeight: 'bold',
     color: '#ffffff',
+  },
+  settingsClickOpacity : {
+  },
+  settingsIcon : {
+    width: height * 0.03, 
+    maxWidth: 100,
+    height: height * 0.03, 
+    resizeMode: 'contain',
+    marginRight: width * 0.005,
   }
 });
 
