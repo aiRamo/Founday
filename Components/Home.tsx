@@ -35,34 +35,47 @@ const DATA = [
 
  const Home = ({navigation}) => {
     const [count, setCount] = useState(0);
-    const onPress = () => setCount(prevCount => prevCount + 1);
+    const goToMatchResults = () => {
+      // going to matches screen functionality
+      setCount(prevCount => prevCount + 1);
+      navigation.navigate('Matches');
+    }
+    
+    const goToOpenClaims = () => {
+      //go to open claims screen
+      navigation.navigate('Claims');
+    }
 
     
   return (
     <View style={styles.wrapper}>
         <View style={styles.container}>
+          {/* user profile picture and names, email  view*/}
             <View style={styles.vertical}>
                 <Image source={{uri: 'https://randomuser.me/api/portraits/men/1.jpg'}} style={styles.img}/>
                 <Text>Names: </Text>
                 <Text>Email: </Text>
             </View>
+            {/* open claims button view*/}
             <View style={styles.vertical}>
-                <Text>3 </Text>
-                <Text>Open Claims </Text>
-                <TouchableOpacity style={styles.button} >
+                <Text style={{textAlign: 'center',}} >3 </Text>
+                <Text style={{textAlign: 'center',}}>Open Claims </Text>
+                <TouchableOpacity style={styles.button} onPress={goToOpenClaims}>
                     <Text>Open Claims</Text>
                 </TouchableOpacity>
             </View>
+            {/* matches button view*/}
             <View style={styles.vertical}>
-                <Text>{count} </Text>
-                <Text>Resolved </Text>
-                <TouchableOpacity style={styles.button} onPress={onPress}>
+                <Text style={{textAlign: 'center',}}>{count} </Text>
+                <Text style={{textAlign: 'center',}}>Resolved </Text>
+                <TouchableOpacity style={styles.button} onPress={goToMatchResults}>
                     <Text>Matches</Text>
                 </TouchableOpacity>
             </View>
 
         </View>
 
+        {/* creating and displaying Lost item report View*/}
         <View>
             <Text> Create new Lost Item Report 
               <AntDesign 
@@ -82,6 +95,7 @@ const DATA = [
             />
         </View>
 
+        {/* creating and displaying Found item report View*/}
         <View>
             <Text> Create new Found Item Report
               <AntDesign 
@@ -105,6 +119,7 @@ const DATA = [
   );
 }
 
+{/* styles for this screen*/}
 const styles = StyleSheet.create({
     wrapper: {
         flex: 1,
@@ -128,11 +143,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#DDDDDD',
     padding: 10,
+    marginRight: 10,
+    borderRadius: 100,
   },
   img: {
     width: 100,
     height: 100,
-    borderRadius: 100 / 2,
+    borderRadius: 100 / 2, // make button round
   },
   item: {
     backgroundColor: '#f9c2ff',
