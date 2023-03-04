@@ -1,7 +1,7 @@
 import React, { Component, useState } from 'react';
-import { ref, set, push } from 'firebase/database';
+import { ref, get, push } from 'firebase/database';
 import { firebase } from './firebaseConfig';
-import { StyleSheet, TextInput, View, Dimensions, Text, Image} from 'react-native';
+import { StyleSheet, TextInput, View, Dimensions, Text, Image, Alert} from 'react-native';
 import { Divider, Header} from '@rneui/themed';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native';
@@ -9,7 +9,7 @@ import { TouchableOpacity } from 'react-native';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 const { width, height } = Dimensions.get('window');
-const db = firebase.database();
+export const db = firebase.database();
 const auth = getAuth();
 
 const Login = ({navigation}) => {
@@ -30,6 +30,27 @@ const Login = ({navigation}) => {
       .then((userCredential) => {
 
         const user = userCredential.user;
+
+        
+
+        const userRef = ref(db, `users/${user.uid}`);
+        get(userRef).then((snapshot) => {
+            if (snapshot.exists()) {
+              // Get the first child key
+              const firstChildKey = Object.keys(snapshot.val())[0];
+          
+              // Get the first child value
+              const firstChildValue = snapshot.child(firstChildKey).val();
+          
+              // Show an alert with the first child value
+              Alert.alert(firstChildValue);
+            } else {
+              console.log("No data available");
+            }
+          }).catch((error) => {
+            console.error(error);
+          });
+
         navigation.replace('Home');
         alert('Signed in.');
 

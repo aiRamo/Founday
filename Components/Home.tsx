@@ -1,7 +1,19 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, FlatList, ImageBackground, Dimensions, ScrollView, Alert} from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
 import Card from './utilities/homepageCard';
+import { firebase } from './firebaseConfig';
+import {get ,ref} from 'firebase/database';
+
+const db = firebase.database()
+
+// getUserData() used to access the info of the user that just signed in.
+
+const getUserData = (uid: string) => {
+  const userRef = ref(db, `users/${uid}`);
+  return get(userRef);
+};
+
+let user;
 
 // The inteface of the lost item i.e. data attributes
 const DATA = [
@@ -56,7 +68,38 @@ const DATA = [
  const Home = ({navigation}) => {
     const [count, setCount] = useState(0);
     const onPress = () => setCount(prevCount => prevCount + 1);
+    const [userData, setUserData] = useState<any>(null);
 
+    useEffect(() => {
+      const user = firebase.auth().currentUser;
+      if (user) {
+        // Call the getUserData function with the user's UID
+        getUserData(user.uid)
+          .then((snapshot) => {
+            if (snapshot.exists()) {
+              // Get the first child key
+              const firstChildKey = Object.keys(snapshot.val())[0];
+              const secondChildKey = Object.keys(snapshot.val())[1];
+  
+              // Get the first child value
+              const firstChildValue = snapshot.child(firstChildKey).val();
+              const secondChildValue = snapshot.child(secondChildKey).val();
+  
+              // Set the state with the user data
+              setUserData(snapshot.val());
+  
+              // Show an alert with the first child value
+              Alert.alert(firstChildValue +  ' ' + secondChildValue);
+            } else {
+              console.log("No data available");
+            }
+          }).catch((error) => {console.error(error);
+          });
+          } else {
+          console.log("User is not logged in");
+          }
+          }, []);
+      
     
   return (
     <View style={styles.wrapper}>
