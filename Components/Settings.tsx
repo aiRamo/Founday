@@ -3,14 +3,22 @@ import { StyleSheet, Text, View, Image, Button, TouchableOpacity } from 'react-n
 
  const Settings = ({navigation}) => {
 
+  //handleLogout() uses navigation.reset() to remove all prior pages from the stack and restart it on the Login screen.
+
+  const handleLogout = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Login' }],
+    });
+  }
+
   return (
     <View style={styles.container}>
         <View style={styles.vertical}>
             <Image source={{uri: 'https://randomuser.me/api/portraits/men/1.jpg'}} style={styles.img}/>
             <Button
                 title="Logout"
-                onPress={() =>
-                    navigation.navigate('Login')}
+                onPress={handleLogout}
             />
         </View>
 

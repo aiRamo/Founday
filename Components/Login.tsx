@@ -30,7 +30,7 @@ const Login = ({navigation}) => {
       .then((userCredential) => {
 
         const user = userCredential.user;
-        navigation.navigate('Home');
+        navigation.replace('Home');
         alert('Signed in.');
 
       })

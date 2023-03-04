@@ -1,37 +1,57 @@
 import React, {useState} from 'react';
-import { StyleSheet, Text, View, Image, Button, TouchableOpacity, FlatList, Pressable} from 'react-native';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import { StyleSheet, Text, View, TouchableOpacity, FlatList, ImageBackground, Dimensions, ScrollView, Alert} from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
-import Settings  from './Settings';
-import LostReport from './LostReport';
-
+import Card from './utilities/homepageCard';
 
 // The inteface of the lost item i.e. data attributes
 const DATA = [
     {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
       title: 'Lost Item 1',
       description: 'is simply dummy text of the \nprinting and typesetting industry.',
+      image: require('../assets/default-apparel.png'),
+      button: false,
     },
     {
-      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
       title: 'Lost Item 2',
       description: 'Lorem Ipsum is simply dummy text of \nthe printing and typesetting industry.',
+      image: require('../assets/default-electronics.png'),
+      button: false,
     },
     {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
       title: 'Lost Item 3',
       description: 'Lorem Ipsum has been the industry\'s \nstandard dummy text ever since the 1500s',
+      image: require('../assets/default-traversals.png'),
+      button: false,
     },
   ];
 
-  const Item = ({title, description}) => (
-    <View style={styles.item}>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.description}>{description}</Text>
-    </View>
-  );
+  DATA.push({
+    title: 'Create New Item Report',
+    description: 'Have a new item? Create here:',
+    image: require('../assets/report-addition.png'),
+    button: true,
+  });
 
+  const { width, height } = Dimensions.get('window');
+
+  // For each card, we check if button == true (which means it is the create report button), if true, change render to handle button pressing.
+  const Item = ({title, description, image, button, onPress}) => (
+    <Card>
+      {button ? (
+      <TouchableOpacity onPress={onPress}>
+        <ImageBackground source={image} style={styles.itemImage}>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.description}>{description}</Text>
+        </ImageBackground>
+      </TouchableOpacity>
+    ) : (
+      <ImageBackground source={image} style={styles.itemImage}>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.description}>{description}</Text>
+      </ImageBackground>
+    )}
+    </Card>
+  );
 
  const Home = ({navigation}) => {
     const [count, setCount] = useState(0);
@@ -40,65 +60,45 @@ const DATA = [
     
   return (
     <View style={styles.wrapper}>
-        <View style={styles.container}>
-            <View style={styles.vertical}>
-                <Image source={{uri: 'https://randomuser.me/api/portraits/men/1.jpg'}} style={styles.img}/>
-                <Text>Names: </Text>
-                <Text>Email: </Text>
-            </View>
-            <View style={styles.vertical}>
-                <Text>3 </Text>
-                <Text>Open Claims </Text>
+        <View style={styles.buttonContainer}>
+            <View>
                 <TouchableOpacity style={styles.button} >
-                    <Text>Open Claims</Text>
+                    <Text style={styles.buttonText}>Open Claims</Text>
                 </TouchableOpacity>
             </View>
-            <View style={styles.vertical}>
-                <Text>{count} </Text>
-                <Text>Resolved </Text>
+            <View>
                 <TouchableOpacity style={styles.button} onPress={onPress}>
-                    <Text>Matches</Text>
+                    <Text style={styles.buttonText}>Matches</Text>
                 </TouchableOpacity>
             </View>
-
         </View>
-
-        <View>
-            <Text> Create new Lost Item Report 
-              <AntDesign 
-                name="pluscircle" 
-                size={30} 
-                color="blue" 
-                style={{margin: 15, padding: 10,}}
-                onPress={() =>
-                  navigation.navigate('Lost Report')
-                }/>
-            </Text>
+        <ScrollView style = {{paddingBottom: 50}}>
+          <View>
+            <Text style={styles.text}>Your Currently Lost Items:</Text>
             <FlatList
                 horizontal ={true}
                 data={DATA}
-                renderItem={({item}) => <Item title={item.title} description={item.description}/>}
-                keyExtractor={item => item.id}
+                renderItem={({item}) =>
+                  <Item title={item.title} description={item.description} image={item.image} button = {item.button} onPress={() => navigation.navigate('Lost Report')} />}
+                  snapToInterval={height * 0.475}
+                  decelerationRate="fast"
             />
-        </View>
+          </View>
 
-        <View>
-            <Text> Create new Found Item Report
-              <AntDesign 
-                name="pluscircle" 
-                size={30} 
-                color="blue" 
-                onPress={() =>
-                  navigation.navigate('Found Report')
-                }/>
-            </Text>
+          <View>
+            <Text style={styles.text}>Your Currently Found Items:</Text>
             <FlatList
                 horizontal ={true}
                 data={DATA}
-                renderItem={({item}) => <Item title={item.title} description={item.description} />}
-                keyExtractor={item => item.id}
+                renderItem={({item}) =>
+                  <Item title={item.title} description={item.description} image={item.image} button = {item.button} onPress={() => navigation.navigate('Found Report')} />}
+                  snapToInterval={height * 0.475}
+                  decelerationRate="fast"
             />
-        </View>
+          </View>
+          <View style={{ height: 35, backgroundColor: '#EFF1F8' }} />
+        </ScrollView>
+        
     </View>
 
     
@@ -108,26 +108,32 @@ const DATA = [
 const styles = StyleSheet.create({
     wrapper: {
         flex: 1,
-        marginTop: 35,
+        backgroundColor: '#EFF1F8',
     },
-  container: {
+  buttonContainer: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
-    alignItems: 'center',
+    backgroundColor: '#EFF1F8',
     justifyContent: 'center',
-    marginTop:  5,
-  },
-  vertical: {
-    flex: 1,
+    marginTop:  15,
+    marginBottom: 10,
+    paddingHorizontal: width * 0.015,
   },
   text: {
-    color: '#fff',
+    color: '#000',
     fontSize: 20,
+    marginLeft: 10,
+    marginTop: 10,
+    marginBottom: 15,
   },
   button: {
     alignItems: 'center',
-    backgroundColor: '#DDDDDD',
-    padding: 10,
+    justifyContent: 'center',
+    backgroundColor: '#687089',
+    padding: 5,
+    width: width * 0.45,
+    height: height * 0.04,
+    marginHorizontal: width * 0.015,
+    borderRadius: 8,
   },
   img: {
     width: 100,
@@ -142,10 +148,36 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 25,
+    color: "#fff",
+    marginTop: 5,
+    marginLeft: 15,
+    textShadowColor: '#000000',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 4,
   },
   description: {
     fontSize: 15,
+    color: "#fff",
+    alignSelf: 'flex-start',
+    marginLeft: 15,
+    marginBottom: 15,
+    textShadowColor: '#000000',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 4,
   },
+  itemImage: {
+    minHeight: height * 0.45,
+    maxHeight: height * 0.45,
+    minWidth: height * 0.45,
+    maxWidth: height * 0.45,
+    justifyContent: 'space-between',
+    flexDirection: 'column',
+    resizeMode: 'contain',
+  },
+  buttonText: {
+    fontWeight: 'bold',
+    color: '#ffffff',
+  }
 });
 
 
