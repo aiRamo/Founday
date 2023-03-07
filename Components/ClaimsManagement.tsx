@@ -3,6 +3,10 @@ import { StyleSheet, Text, View, Image, Button, TouchableOpacity, ScrollView } f
 import { AntDesign } from '@expo/vector-icons';
 
  const ClaimsManagement = ({navigation}) => {
+  const goToPrivateMessage = () => {
+    //go to chat
+    navigation.navigate('Private Message');
+  }
 
   return (
     <View >
@@ -23,7 +27,7 @@ import { AntDesign } from '@expo/vector-icons';
             <AntDesign 
                 name="pushpin" 
                 size={25} 
-                onPress={() => {}
+                onPress={() => {goToPrivateMessage}
                 } style={{marginTop: 10, alignItems: 'flex-end'}} />
         </View>
         {/* item you lost 2*/}
@@ -41,7 +45,7 @@ import { AntDesign } from '@expo/vector-icons';
             <AntDesign 
                 name="pushpin" 
                 size={25} 
-                onPress={() => {}
+                onPress={() => {goToPrivateMessage}
                 } style={{marginTop: 10, alignItems: 'flex-end'}} />
         </View>
 
@@ -66,7 +70,7 @@ import { AntDesign } from '@expo/vector-icons';
                 <AntDesign 
                     name="pushpin" 
                     size={25} 
-                    onPress={() => {}
+                    onPress={() => {goToPrivateMessage}
                     } style={{marginTop: 10, alignItems: 'flex-end'}} />
             </View>
 
@@ -85,7 +89,7 @@ import { AntDesign } from '@expo/vector-icons';
                 <AntDesign 
                     name="pushpin" 
                     size={25} 
-                    onPress={() => {}
+                    onPress={() => {goToPrivateMessage}
                     } style={{marginTop: 10, alignItems: 'flex-end'}} />
             </View>
 
@@ -104,7 +108,7 @@ import { AntDesign } from '@expo/vector-icons';
                 <AntDesign 
                     name="pushpin" 
                     size={25} 
-                    onPress={() => {}
+                    onPress={() => {goToPrivateMessage}
                     } style={{marginTop: 10, alignItems: 'flex-end'}} />
             </View>
 
@@ -123,7 +127,7 @@ import { AntDesign } from '@expo/vector-icons';
                 <AntDesign 
                     name="pushpin" 
                     size={25} 
-                    onPress={() => {}
+                    onPress={() => {goToPrivateMessage}
                     } style={{marginTop: 10, alignItems: 'flex-end'}} />
             </View>
         </ScrollView>
