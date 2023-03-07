@@ -76,17 +76,18 @@ const DATA = [
         </View>
 
         {/* creating and displaying Lost item report View*/}
-        <View>
-            <Text> Create new Lost Item Report 
+        <View style={{marginTop: 20, }}>
+          <View style={styles.innerContainer}>
+            <Text style={{fontSize: 20, fontWeight: 'bold'}}> Create new Lost Item Report </Text>
               <AntDesign 
                 name="pluscircle" 
                 size={30} 
                 color="blue" 
-                style={{margin: 15, padding: 10,}}
+                style={{marginLeft: 15, marginBottom: 5, alignItems: 'flex-end'}}
                 onPress={() =>
                   navigation.navigate('Lost Report')
                 }/>
-            </Text>
+          </View>
             <FlatList
                 horizontal ={true}
                 data={DATA}
@@ -96,16 +97,19 @@ const DATA = [
         </View>
 
         {/* creating and displaying Found item report View*/}
-        <View>
-            <Text> Create new Found Item Report
-              <AntDesign 
-                name="pluscircle" 
-                size={30} 
-                color="blue" 
-                onPress={() =>
-                  navigation.navigate('Found Report')
-                }/>
-            </Text>
+        <View style={{marginTop: 20, }}>
+            <View style={styles.innerContainer}>
+              <Text style={{fontSize: 20, fontWeight: 'bold'}}> Create new Found Item Report </Text>
+                <AntDesign 
+                  name="pluscircle" 
+                  size={30} 
+                  color="blue" 
+                  style={{marginLeft: 8, marginBottom: 5, alignItems: 'flex-end'}}
+                  onPress={() =>
+                    navigation.navigate('Found Report')
+                  }/>
+            
+            </View>
             <FlatList
                 horizontal ={true}
                 data={DATA}
@@ -123,7 +127,7 @@ const DATA = [
 const styles = StyleSheet.create({
     wrapper: {
         flex: 1,
-        marginTop: 35,
+        marginTop: 5,
     },
   container: {
     flexDirection: 'row',
@@ -131,6 +135,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop:  5,
+  },
+  innerContainer: {
+    flexDirection: 'row',
+    marginTop: 5,
+
   },
   vertical: {
     flex: 1,
