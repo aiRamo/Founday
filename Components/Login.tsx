@@ -1,7 +1,7 @@
 import React, { Component, useState } from 'react';
-import { ref, set, push } from 'firebase/database';
+import { ref, get, push } from 'firebase/database';
 import { firebase } from './firebaseConfig';
-import { StyleSheet, TextInput, View, Dimensions, Text, Image} from 'react-native';
+import { StyleSheet, TextInput, View, Dimensions, Text, Image, Alert} from 'react-native';
 import { Divider, Header} from '@rneui/themed';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native';
@@ -9,7 +9,7 @@ import { TouchableOpacity } from 'react-native';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 const { width, height } = Dimensions.get('window');
-const db = firebase.database();
+export const db = firebase.database();
 const auth = getAuth();
 
 const Login = ({navigation}) => {
@@ -30,8 +30,8 @@ const Login = ({navigation}) => {
       .then((userCredential) => {
 
         const user = userCredential.user;
-        navigation.navigate('Home');
-        alert('Signed in.');
+
+        navigation.replace('Home');
 
       })
       .catch((error) => {

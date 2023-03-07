@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TouchableOpacity, Dimensions, Image } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, Dimensions, Image, View } from 'react-native';
 import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -43,7 +43,20 @@ const { width, height } = Dimensions.get('window');
                 style={styles.settingsIcon}
               />
             </TouchableOpacity>
-          )
+          ),
+          headerLeft: () => { // Profile Icon loaded here!
+            return (
+              <View style={styles.profile}>
+                <Image
+                  source={require('./assets/defaultProfile.png')}
+                  style={styles.profileIcon}
+                />
+                <Text style = {styles.profileText}>
+                  Adrian
+                </Text>
+            </View>
+            );
+          }
         })}
       />
       <Stack.Screen name="Lost Report" component={LostReport} options={{title: 'Lost Item Report'}}/>
@@ -80,6 +93,23 @@ const styles = StyleSheet.create({
     height: height * 0.03, 
     resizeMode: 'contain',
     marginRight: width * 0.005,
+  },
+  profileIcon: {
+    width: height * 0.03, 
+    maxWidth: 100,
+    height: height * 0.03, 
+    resizeMode: 'contain',
+  },
+  profile: {
+    flexDirection: 'row', 
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  profileText: {
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginTop: 10,
+    marginLeft: 4,
   }
 });
 
