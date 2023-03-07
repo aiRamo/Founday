@@ -31,28 +31,7 @@ const Login = ({navigation}) => {
 
         const user = userCredential.user;
 
-        
-
-        const userRef = ref(db, `users/${user.uid}`);
-        get(userRef).then((snapshot) => {
-            if (snapshot.exists()) {
-              // Get the first child key
-              const firstChildKey = Object.keys(snapshot.val())[0];
-          
-              // Get the first child value
-              const firstChildValue = snapshot.child(firstChildKey).val();
-          
-              // Show an alert with the first child value
-              Alert.alert(firstChildValue);
-            } else {
-              console.log("No data available");
-            }
-          }).catch((error) => {
-            console.error(error);
-          });
-
         navigation.replace('Home');
-        alert('Signed in.');
 
       })
       .catch((error) => {

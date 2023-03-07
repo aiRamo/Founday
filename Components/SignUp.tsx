@@ -1,16 +1,21 @@
 import React, { Component, useState } from 'react';
-import { ref, set, push } from 'firebase/database';
+import { ref, set, get, push } from 'firebase/database';
 import { firebase } from './firebaseConfig';
-import { StyleSheet, TextInput, View, Dimensions, Text} from 'react-native';
+import { StyleSheet, TextInput, View, Dimensions, Text, Image} from 'react-native';
 import { Divider, Header} from '@rneui/themed';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native';
+import {getStorage, ref as storageReference, uploadBytes } from 'firebase/storage';
 
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 
 const { width, height } = Dimensions.get('window');
 const db = firebase.database();
 const auth = getAuth();
+const storage = getStorage();
+
+
+
 
 const SignUp = ({navigation}) =>  {
 
@@ -19,6 +24,15 @@ const SignUp = ({navigation}) =>  {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [email, setEmail] = useState('');
+    const [image, setImage] = useState('');
+
+    const submitData = () => {
+        const storageRef = storageReference(storage, 'child');
+    
+        uploadBytes(storageRef, image).then((snapshot) =>{
+            alert('Uploaded file!')
+        })
+    }
 
     //createUser() checks fields for correctness then inserts the user's credentials into Firebase via push(ref(), {...})
     const createUser = async ({navigation}) => {
@@ -44,18 +58,85 @@ const SignUp = ({navigation}) =>  {
                     password: password
                 };
 
+                const userSnapshot = await get(ref(db, path));
+                    if (!userSnapshot.exists()) {
+                        await set(ref(db, path), userObject);
+                    }
+
+                // Create subdirectories for lost and found items
+                const lostItemsPath = path + '/LostItems';
+                const foundItemsPath = path + '/FoundItems';
+
+                const lostItemsRef = ref(db, lostItemsPath);
+                const newLostItemRef = push(lostItemsRef);
+
+                const foundItemsRef = ref(db, foundItemsPath);
+                const newFoundItemRef = push(foundItemsRef);
+
+                const newLostItemId = newLostItemRef.key;
+                const newFoundItemId = newFoundItemRef.key;
+
+                const imagePath = '../assets/uriExample3.jpg';
+                await Promise.all([
+                    set(ref(db, lostItemsPath + '/item1'), {
+                        reportId: 'lost' + newLostItemId,
+                        itemName: 'Necklace',
+                        type: 'lostItem',
+                        category: 'Apparel',
+                        description: 'Gold necklace with diamond pendant',
+                        createdAt: new Date().toISOString(),
+                        authorName: `${firstName} ${lastName}`,
+                        image: 'N/A',
+                    }),
+                    set(ref(db, lostItemsPath + '/item2'), {
+                        reportId: 'lost' + newLostItemId,
+                        itemName: 'Dell Laptop',
+                        type: 'lostItem',
+                        category: 'Electronics',
+                        description: 'Dell XPS 15 laptop with black case',
+                        createdAt: new Date().toISOString(),
+                        authorName: `${firstName} ${lastName}`,
+                        image: 'N/A',
+                    }),
+                    set(ref(db, foundItemsPath + '/item1'), {
+                        reportId: 'found' + newFoundItemId,
+                        itemName: 'Airpods',
+                        type: 'foundItem',
+                        category: 'Electronics',
+                        description: 'Airpods with custom evelyn inscription',
+                        createdAt: new Date().toISOString(),
+                        authorName: `${firstName} ${lastName}`,
+                        image: 'N/A',
+                    }),
+                    set(ref(db, foundItemsPath + '/item2'), {
+                        reportId: 'found' + newFoundItemId,
+                        itemName: 'Samsung Phone',
+                        type: 'foundItem',
+                        category: 'Electronics',
+                        description: 'Samsung Galaxy S21 with cracked screen',
+                        createdAt: new Date().toISOString(),
+                        authorName: `${firstName} ${lastName}`,
+                        image: 'N/A',
+                    })
+                    
+                ])
+                .catch(error => {
+                    // handle the error
+                    console.error(error);
+                });
+
                 if (!user.emailVerified) {
                     firebase.auth().onAuthStateChanged(function(user) {
                         if (user) {
                             user.sendEmailVerification(); 
                         }
                       });
+
                 alert('Verification email sent.'); 
+                
                 }
-
                 navigation.navigate('Login');
-
-                await set(ref(db, path), userObject);
+                
             } catch (error) {
                 alert(error)
                 return;

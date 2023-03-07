@@ -2,9 +2,17 @@ import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, FlatList, ImageBackground, Dimensions, ScrollView, Alert} from 'react-native';
 import Card from './utilities/homepageCard';
 import { firebase } from './firebaseConfig';
-import {get ,ref} from 'firebase/database';
+import {get ,ref, onValue} from 'firebase/database';
 
 const db = firebase.database()
+
+
+interface LostItem {
+  title: string;
+  description: string;
+  image: any;
+  button: boolean;
+}
 
 // getUserData() used to access the info of the user that just signed in.
 
@@ -37,12 +45,7 @@ const DATA = [
     },
   ];
 
-  DATA.push({
-    title: 'Create New Item Report',
-    description: 'Have a new item? Create here:',
-    image: require('../assets/report-addition.png'),
-    button: true,
-  });
+  
 
   const { width, height } = Dimensions.get('window');
 
@@ -69,36 +72,129 @@ const DATA = [
     const [count, setCount] = useState(0);
     const onPress = () => setCount(prevCount => prevCount + 1);
     const [userData, setUserData] = useState<any>(null);
+    const [lostItems, setLostItems] = useState<LostItem[]>([]);
+    const [FoundItems, setFoundItems] = useState<LostItem[]>([]);
 
     useEffect(() => {
+      //get the user reference using firebase.auth()
       const user = firebase.auth().currentUser;
       if (user) {
-        // Call the getUserData function with the user's UID
-        getUserData(user.uid)
-          .then((snapshot) => {
-            if (snapshot.exists()) {
-              // Get the first child key
-              const firstChildKey = Object.keys(snapshot.val())[0];
-              const secondChildKey = Object.keys(snapshot.val())[1];
-  
-              // Get the first child value
-              const firstChildValue = snapshot.child(firstChildKey).val();
-              const secondChildValue = snapshot.child(secondChildKey).val();
-  
-              // Set the state with the user data
-              setUserData(snapshot.val());
-  
-              // Show an alert with the first child value
-              Alert.alert(firstChildValue +  ' ' + secondChildValue);
-            } else {
-              console.log("No data available");
+        const uid = user.uid;
+
+        //gets the paths to use w/ snapshot.foreach()
+        const lostPath = 'users/' + uid + '/LostItems';
+        const foundPath = 'users/' + uid + '/FoundItems';
+
+
+        const lostItemsRef = ref(db, lostPath);
+        const foundItemsRef = ref(db, foundPath);
+
+
+        onValue(lostItemsRef, (snapshot) => {
+          const items = [];
+          snapshot.forEach((childSnapshot) => {
+            const childData = childSnapshot.val();
+            const item = {
+              title: childData.itemName,
+              description: childData.description,
+              image: null,
+              button: false,
+            };
+            // Use a switch statement to set the image based on the category of the lost item
+            if (childData.image == 'N/A'){
+              switch (childData.category) {
+                case 'Apparel':
+                  item.image = require('../assets/default-apparel.png');
+                  break;
+                case 'Electronics':
+                  item.image = require('../assets/default-electronics.png');
+                  break;
+                case 'Traversals':
+                  item.image = require('../assets/default-traversals.png');
+                  break;
+                case 'Bags':
+                  item.image = require('../assets/default-bags.png');
+                  break;
+                case 'ID':
+                  item.image = require('../assets/default-ID.png');
+                  break;
+                case 'Keys':
+                  item.image = require('../assets/default-keys.png');
+                  break;
+                default:
+                  Alert.alert(childData.category);
+                  item.image = require('../assets/defaultProfile.png');
+                  break;
+              }
+            } else { //This is where I will DECODE the base64 image in the database and use it for item.image
+              
             }
-          }).catch((error) => {console.error(error);
+            items.push(item);
           });
-          } else {
-          console.log("User is not logged in");
-          }
-          }, []);
+          items.push({
+            title: 'Create New Lost Item Report',
+            description: 'Have a new item? Create here:',
+            image: require('../assets/report-addition.png'),
+            button: true,
+          });
+          setLostItems(items);
+        });
+
+        onValue(foundItemsRef, (snapshot) => {
+          const items = [];
+          snapshot.forEach((childSnapshot) => {
+            const childData = childSnapshot.val();
+            const item = {
+              title: childData.itemName,
+              description: childData.description,
+              image: null,
+              button: false,
+            };
+            // Use a switch statement to set the image based on the category of the lost item
+            if (childData.image == 'N/A'){
+              switch (childData.category) {
+                case 'Apparel':
+                  item.image = require('../assets/default-apparel.png');
+                  break;
+                case 'Electronics':
+                  item.image = require('../assets/default-electronics.png');
+                  break;
+                case 'Traversals':
+                  item.image = require('../assets/default-traversals.png');
+                  break;
+                case 'Bags':
+                  item.image = require('../assets/default-bags.png');
+                  break;
+                case 'ID':
+                  item.image = require('../assets/default-ID.png');
+                  break;
+                case 'Keys':
+                  item.image = require('../assets/default-keys.png');
+                  break;
+                default:
+                  Alert.alert(childData.category);
+                  item.image = require('../assets/defaultProfile.png');
+                  break;
+              }
+            } else { //This is where I will DECODE the base64 image in the database and use it for item.image
+
+            }
+            items.push(item);
+          });
+          items.push({
+            title: 'Create New Found Item Report',
+            description: 'Have a new item? Create here:',
+            image: require('../assets/report-addition.png'),
+            button: true,
+          });
+          setFoundItems(items);
+        });
+      } else {
+        console.log("User is not logged in");
+      }
+    }, []);
+
+    
       
     
   return (
@@ -120,7 +216,7 @@ const DATA = [
             <Text style={styles.text}>Your Currently Lost Items:</Text>
             <FlatList
                 horizontal ={true}
-                data={DATA}
+                data={lostItems}
                 renderItem={({item}) =>
                   <Item title={item.title} description={item.description} image={item.image} button = {item.button} onPress={() => navigation.navigate('Lost Report')} />}
                   snapToInterval={height * 0.475}
@@ -132,7 +228,7 @@ const DATA = [
             <Text style={styles.text}>Your Currently Found Items:</Text>
             <FlatList
                 horizontal ={true}
-                data={DATA}
+                data={FoundItems}
                 renderItem={({item}) =>
                   <Item title={item.title} description={item.description} image={item.image} button = {item.button} onPress={() => navigation.navigate('Found Report')} />}
                   snapToInterval={height * 0.475}
