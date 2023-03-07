@@ -4,7 +4,10 @@ import { Card, Button, Avatar } from 'react-native-paper';
 import { AntDesign } from '@expo/vector-icons';
 
 
-const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
+/* const LeftContent = props => <Avatar.Icon {...props} icon="folder" /> */
+{/* right and left elements to pass to the cards*/}
+const LeftContent = props => <Image source={{uri: 'https://randomuser.me/api/portraits/men/1.jpg'}} style={styles.img}/>
+const RightContent = props => <AntDesign name="ellipsis1" size={25} onPress={() => {}} style={{marginTop: 4, marginRight: 5, alignItems: 'flex-end'}} />
 
  const MatchingResults = ({navigation}) => {
 
@@ -15,72 +18,63 @@ const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
           <ScrollView style={{marginTop: 1, marginLeft: 5, }}>
 
             {/* card 1*/}
-            <View style={styles.container}>
-              <Image source={{uri: 'https://randomuser.me/api/portraits/men/1.jpg'}} style={styles.img}/>
-              
-              {/* more icon*/}
-              <AntDesign 
-                  name="ellipsis1" 
-                  size={25} 
-                  onPress={() => {}
-                  } style={{marginTop: 10, marginLeft: 250, alignItems: 'flex-end'}} />
-
-              <View style={styles.innerContainer}>
-
-                {/* implemented with Text and Button as children */}
-              
-              </View>
-              
-
-            </View>
+            <Card style={styles.card}>
+                  <Card.Title title="Finder name" subtitle="time" left={LeftContent} right={RightContent}/>
+                  <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
+                  <Card.Content>
+                    <Text style={{fontWeight: 'bold'}}>Apple watch</Text>
+                    <Text >an apple watch, 3 series in 2016</Text>
+                  </Card.Content>
+                  <Card.Actions>
+                    <Button>Matching Locations</Button>
+                    <Button>More</Button>
+                  </Card.Actions>
+              </Card>
 
             {/* card 2*/}
-            <View style={styles.container}>
-              <Image source={{uri: 'https://randomuser.me/api/portraits/men/1.jpg'}} style={styles.img}/>
-              
-              {/* more icon*/}
-              <AntDesign 
-                  name="ellipsis1" 
-                  size={25} 
-                  onPress={() => {}
-                  } style={{marginTop: 10, marginLeft: 20, alignItems: 'flex-end'}} />
-
-                      <View style={styles.container2}>
-                        <Card>
-                          <Text style={styles.paragraph}>
-                            React Native Card View for Android and IOS using
-                            "react-native-paper"
-                          </Text>
-                        </Card>
-                      </View>
-                    
-
-            </View>
+            <Card style={styles.card}>
+                  <Card.Title title="Jane Doe" subtitle="12 Hours ago" left={LeftContent} right={RightContent}/>
+                  <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
+                  <Card.Content>
+                    <Text style={{fontWeight: 'bold'}}>Apple watch</Text>
+                    <Text >an apple watch, 3 series in 2016</Text>
+                  </Card.Content>
+                  <Card.Actions>
+                    <Button>Matching Locations</Button>
+                    <Button>More</Button>
+                  </Card.Actions>
+              </Card>
+           
 
             {/* card 3*/}
-            <View style={styles.container}>
-              <Image source={{uri: 'https://randomuser.me/api/portraits/men/1.jpg'}} style={styles.img}/>
-              
-              {/* more icon*/}
-              <AntDesign 
-                  name="ellipsis1" 
-                  size={25} 
-                  onPress={() => {}
-                  } style={{marginTop: 10, marginLeft: 5, alignItems: 'flex-end'}} />
-
-              <Card>
+            <View>
+              <Card style={styles.card}>
                   <Card.Title title="Card Title" subtitle="Card Subtitle" left={LeftContent} />
-                  <Card.Content>
-                    <Text >Card title</Text>
-                    <Text >Card content</Text>
-                  </Card.Content>
                   <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
+                  <Card.Content>
+                    <Text >Item name</Text>
+                    <Text >item description</Text>
+                  </Card.Content>
                   <Card.Actions>
-                    <Button>Cancel</Button>
-                    <Button>Ok</Button>
+                    <Button>Matching Locations</Button>
+                    <Button>More</Button>
                   </Card.Actions>
-                </Card>
+              </Card>
             </View>
+
+            {/* card 4*/}
+            <Card style={styles.card}>
+                  <Card.Title title="Finder name" subtitle="time" left={LeftContent} right={RightContent}/>
+                  <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
+                  <Card.Content>
+                    <Text style={{fontWeight: 'bold'}}>Backpack</Text>
+                    <Text >a nike backpack, looking new with books inside</Text>
+                  </Card.Content>
+                  <Card.Actions>
+                    <Button>Matching Locations</Button>
+                    <Button>More</Button>
+                  </Card.Actions>
+              </Card>
 
           </ScrollView>
 
@@ -117,7 +111,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 100 / 2,
-    margin: 6,
+    marginRight: 8,
   },
   container2: {
     flex: 1,
@@ -132,6 +126,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     padding: 20,
+  },
+  card: {
+    marginTop: 15,
   },
 });
 
