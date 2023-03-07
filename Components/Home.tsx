@@ -211,12 +211,12 @@ const DATA = [
     <View style={styles.wrapper}>
         <View style={styles.buttonContainer}>
             <View>
-                <TouchableOpacity style={styles.button} >
+                <TouchableOpacity style={styles.button} onPress={goToOpenClaims} >
                     <Text style={styles.buttonText}>Open Claims</Text>
                 </TouchableOpacity>
             </View>
             <View>
-                <TouchableOpacity style={styles.button} onPress={onPress}>
+                <TouchableOpacity style={styles.button} onPress={goToMatchResults}>
                     <Text style={styles.buttonText}>Matches</Text>
                 </TouchableOpacity>
             </View>
