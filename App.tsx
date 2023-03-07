@@ -9,6 +9,9 @@ import LostReport from './Components/LostReport';
 import Settings from './Components/Settings';
 import FoundReport from './Components/FoundReport';
 import SignUp from './Components/SignUp';
+import ClaimsManagement from './Components/ClaimsManagement';
+import MatchingResults from './Components/MatchingResults';
+import PrivateMessage from './Components/PrivateMessage';
 
 const Stack = createNativeStackNavigator();
 const { width, height } = Dimensions.get('window');
@@ -60,6 +63,9 @@ const { width, height } = Dimensions.get('window');
       <Stack.Screen name="Found Report" component={FoundReport} options={{title: 'Found Item Report'}}/>
       <Stack.Screen name="Sign Up" component={SignUp} options={{headerShown: false}}/>
       <Stack.Screen name="User Settings" component={Settings} options={{title: 'Settings'}}/>
+      <Stack.Screen name="Claims" component={ClaimsManagement} options={{title: 'Open Claims'}}/>
+      <Stack.Screen name="Matches" component={MatchingResults} options={{title: 'Possible Matching Items'}}/>
+      <Stack.Screen name="Private Message" component={PrivateMessage} options={{title: 'Username'}}/>
     </Stack.Navigator>
     </NavigationContainer>
   );

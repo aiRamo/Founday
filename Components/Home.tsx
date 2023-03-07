@@ -193,9 +193,19 @@ const DATA = [
         console.log("User is not logged in");
       }
     }, []);
-
     
-      
+    
+    const goToMatchResults = () => {
+      // going to matches screen functionality
+      setCount(prevCount => prevCount + 1);
+      navigation.navigate('Matches');
+    }
+    
+    const goToOpenClaims = () => {
+      //go to open claims screen
+      navigation.navigate('Claims');
+    }
+
     
   return (
     <View style={styles.wrapper}>
@@ -223,7 +233,6 @@ const DATA = [
                   decelerationRate="fast"
             />
           </View>
-
           <View>
             <Text style={styles.text}>Your Currently Found Items:</Text>
             <FlatList
@@ -244,6 +253,7 @@ const DATA = [
   );
 }
 
+{/* styles for this screen*/}
 const styles = StyleSheet.create({
     wrapper: {
         flex: 1,
@@ -277,7 +287,7 @@ const styles = StyleSheet.create({
   img: {
     width: 100,
     height: 100,
-    borderRadius: 100 / 2,
+    borderRadius: 100 / 2, // make button round
   },
   item: {
     backgroundColor: '#f9c2ff',
