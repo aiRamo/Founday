@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity, FlatList, ImageBackground, Di
 import Card from './utilities/homepageCard';
 import { firebase } from './firebaseConfig';
 import {get ,ref, onValue} from 'firebase/database';
+import { getDownloadURL } from 'firebase/storage';
 
 const db = firebase.database()
 
@@ -12,6 +13,7 @@ interface LostItem {
   description: string;
   image: any;
   button: boolean;
+  imageCategory: string;
 }
 
 // getUserData() used to access the info of the user that just signed in.
@@ -20,37 +22,26 @@ const getUserData = (uid: string) => {
   const userRef = ref(db, `users/${uid}`);
   return get(userRef);
 };
-
-let user;
-
-// The inteface of the lost item i.e. data attributes
-const DATA = [
-    {
-      title: 'Lost Item 1',
-      description: 'is simply dummy text of the \nprinting and typesetting industry.',
-      image: require('../assets/default-apparel.png'),
-      button: false,
-    },
-    {
-      title: 'Lost Item 2',
-      description: 'Lorem Ipsum is simply dummy text of \nthe printing and typesetting industry.',
-      image: require('../assets/default-electronics.png'),
-      button: false,
-    },
-    {
-      title: 'Lost Item 3',
-      description: 'Lorem Ipsum has been the industry\'s \nstandard dummy text ever since the 1500s',
-      image: require('../assets/default-traversals.png'),
-      button: false,
-    },
-  ];
-
   
-
   const { width, height } = Dimensions.get('window');
 
   // For each card, we check if button == true (which means it is the create report button), if true, change render to handle button pressing.
-  const Item = ({title, description, image, button, onPress}) => (
+  const Item = ({title, description, image, button, onPress, imageCategory}) => {
+
+    const user = firebase.auth().currentUser;
+    const uid = user?.uid;
+    const [imageUrl, setImageUrl] = useState(null);
+
+    useEffect(() => {
+      if (image) {
+        const storageRef = firebase.storage().ref(`${imageCategory}/${uid}/${image}`);
+        storageRef.getDownloadURL().then((url) => {
+          setImageUrl(url);
+        });
+      }
+    }, [image]);
+
+    return (
     <Card>
       {button ? (
       <TouchableOpacity onPress={onPress}>
@@ -60,13 +51,23 @@ const DATA = [
         </ImageBackground>
       </TouchableOpacity>
     ) : (
-      <ImageBackground source={image} style={styles.itemImage}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.description}>{description}</Text>
-      </ImageBackground>
-    )}
+      <View>
+        {imageUrl ? (
+          <ImageBackground source={{ uri: imageUrl }} style={styles.itemImage}>
+            <Text style={styles.title}>{title}</Text>
+            <Text style={styles.description}>{description}</Text>
+          </ImageBackground>
+        ) : (
+          <ImageBackground source={image} style={styles.itemImage}>
+            <Text style={styles.title}>{title}</Text>
+            <Text style={styles.description}>{description}</Text>
+          </ImageBackground>
+        )}
+      </View>
+      )}
     </Card>
-  );
+    );
+  };
 
  const Home = ({navigation}) => {
     const [count, setCount] = useState(0);
@@ -99,6 +100,7 @@ const DATA = [
               description: childData.description,
               image: null,
               button: false,
+              imageCategory: "UserLostPhotos",
             };
             // Use a switch statement to set the image based on the category of the lost item
             if (childData.image == 'N/A'){
@@ -126,8 +128,8 @@ const DATA = [
                   item.image = require('../assets/defaultProfile.png');
                   break;
               }
-            } else { //This is where I will DECODE the base64 image in the database and use it for item.image
-              
+            } else {
+              item.image = childData.image;
             }
             items.push(item);
           });
@@ -135,6 +137,7 @@ const DATA = [
             title: 'Create New Lost Item Report',
             description: 'Have a new item? Create here:',
             image: require('../assets/report-addition.png'),
+            imageCategory: "UserLostPhotos",
             button: true,
           });
           setLostItems(items);
@@ -149,6 +152,7 @@ const DATA = [
               description: childData.description,
               image: null,
               button: false,
+              imageCategory: "UserFoundPhotos",
             };
             // Use a switch statement to set the image based on the category of the lost item
             if (childData.image == 'N/A'){
@@ -177,7 +181,7 @@ const DATA = [
                   break;
               }
             } else { //This is where I will DECODE the base64 image in the database and use it for item.image
-
+              item.image = childData.image;
             }
             items.push(item);
           });
@@ -186,6 +190,7 @@ const DATA = [
             description: 'Have a new item? Create here:',
             image: require('../assets/report-addition.png'),
             button: true,
+            imageCategory: "UserFoundPhotos",
           });
           setFoundItems(items);
         });
@@ -228,7 +233,8 @@ const DATA = [
                 horizontal ={true}
                 data={lostItems}
                 renderItem={({item}) =>
-                  <Item title={item.title} description={item.description} image={item.image} button = {item.button} onPress={() => navigation.navigate('Lost Report')} />}
+                  <Item title={item.title} description={item.description} image={item.image} button = {item.button} onPress={() => navigation.navigate('Lost Report')}
+                    imageCategory={item.imageCategory} />}
                   snapToInterval={height * 0.475}
                   decelerationRate="fast"
             />
@@ -239,7 +245,8 @@ const DATA = [
                 horizontal ={true}
                 data={FoundItems}
                 renderItem={({item}) =>
-                  <Item title={item.title} description={item.description} image={item.image} button = {item.button} onPress={() => navigation.navigate('Found Report')} />}
+                  <Item title={item.title} description={item.description} image={item.image} button = {item.button} onPress={() => navigation.navigate('Found Report')} 
+                  imageCategory={item.imageCategory} />}
                   snapToInterval={height * 0.475}
                   decelerationRate="fast"
             />
