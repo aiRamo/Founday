@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
         shadowColor: '#000000',
         shadowOpacity: 0.8,
         backgroundColor: '#CDD1DC',
-        marginHorizontal: 10,
+        marginHorizontal: 5,
         marginVertical: 10,
     },
     cardContent: {

@@ -64,59 +64,45 @@ const SignUp = ({navigation}) =>  {
                     }
 
                 // Create subdirectories for lost and found items
-                const lostItemsPath = path + '/LostItems';
-                const foundItemsPath = path + '/FoundItems';
+                const lostItemsPath = 'LostItems/';
+                const foundItemsPath ='FoundItems/';
 
-                const lostItemsRef = ref(db, lostItemsPath);
-                const newLostItemRef = push(lostItemsRef);
+                const lostItemsRef = db.ref(lostItemsPath);
 
-                const foundItemsRef = ref(db, foundItemsPath);
-                const newFoundItemRef = push(foundItemsRef);
+                const foundItemsRef = db.ref(foundItemsPath);
 
-                const newLostItemId = newLostItemRef.key;
-                const newFoundItemId = newFoundItemRef.key;
-
-                const imagePath = '../assets/uriExample3.jpg';
                 await Promise.all([
-                    set(ref(db, lostItemsPath + '/item1'), {
-                        reportId: 'lost' + newLostItemId,
+                    lostItemsRef.push().set({
                         itemName: 'Necklace',
-                        type: 'lostItem',
                         category: 'Apparel',
                         description: 'Gold necklace with diamond pendant',
-                        createdAt: new Date().toISOString(),
-                        authorName: `${firstName} ${lastName}`,
-                        image: 'N/A',
+                        date: new Date().toISOString(),
+                        author: uid,
+                        image: 'uriExample1.jpg',
                     }),
-                    set(ref(db, lostItemsPath + '/item2'), {
-                        reportId: 'lost' + newLostItemId,
+                    lostItemsRef.push().set({
                         itemName: 'Dell Laptop',
-                        type: 'lostItem',
                         category: 'Electronics',
                         description: 'Dell XPS 15 laptop with black case',
-                        createdAt: new Date().toISOString(),
-                        authorName: `${firstName} ${lastName}`,
+                        date: new Date().toISOString(),
+                        author: uid,
                         image: 'N/A',
                     }),
-                    set(ref(db, foundItemsPath + '/item1'), {
-                        reportId: 'found' + newFoundItemId,
+                    foundItemsRef.push().set({
                         itemName: 'Airpods',
-                        type: 'foundItem',
                         category: 'Electronics',
                         description: 'Airpods with custom evelyn inscription',
-                        createdAt: new Date().toISOString(),
-                        authorName: `${firstName} ${lastName}`,
-                        image: 'N/A',
+                        date: new Date().toISOString(),
+                        author: uid,
+                        image: 'uriExample3.jpg',
                     }),
-                    set(ref(db, foundItemsPath + '/item2'), {
-                        reportId: 'found' + newFoundItemId,
+                    foundItemsRef.push().set({
                         itemName: 'Samsung Phone',
-                        type: 'foundItem',
                         category: 'Electronics',
                         description: 'Samsung Galaxy S21 with cracked screen',
-                        createdAt: new Date().toISOString(),
-                        authorName: `${firstName} ${lastName}`,
-                        image: 'N/A',
+                        date: new Date().toISOString(),
+                        author: uid,
+                        image: 'uriExample4.jpg',
                     })
                     
                 ])

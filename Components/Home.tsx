@@ -83,8 +83,8 @@ const getUserData = (uid: string) => {
         const uid = user.uid;
 
         //gets the paths to use w/ snapshot.foreach()
-        const lostPath = 'users/' + uid + '/LostItems';
-        const foundPath = 'users/' + uid + '/FoundItems';
+        const lostPath = 'LostItems/';
+        const foundPath = 'FoundItems/';
 
 
         const lostItemsRef = ref(db, lostPath);
@@ -235,7 +235,7 @@ const getUserData = (uid: string) => {
                 renderItem={({item}) =>
                   <Item title={item.title} description={item.description} image={item.image} button = {item.button} onPress={() => navigation.navigate('Lost Report')}
                     imageCategory={item.imageCategory} />}
-                  snapToInterval={height * 0.475}
+                  snapToInterval={height * 0.46}
                   decelerationRate="fast"
             />
           </View>
@@ -246,8 +246,8 @@ const getUserData = (uid: string) => {
                 data={FoundItems}
                 renderItem={({item}) =>
                   <Item title={item.title} description={item.description} image={item.image} button = {item.button} onPress={() => navigation.navigate('Found Report')} 
-                  imageCategory={item.imageCategory} />}
-                  snapToInterval={height * 0.475}
+                    imageCategory={item.imageCategory} />}
+                  snapToInterval={height * 0.46}
                   decelerationRate="fast"
             />
           </View>
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
   },
   item: {
     backgroundColor: '#f9c2ff',
-    padding: 20,
+    padding: 2,
     marginVertical: 8,
     marginHorizontal: 16,
   },

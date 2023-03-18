@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { StyleSheet, Text, TextInput, View, Button, ScrollView, Pressable} from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, Pressable, Image} from 'react-native';
 import DatePicker from 'react-native-modern-datepicker';
-import Home from './Home';
-import UploadImage from './utilities/UploadImage';
+import * as ImagePicker from 'expo-image-picker';
+import UploadImage, {image} from './utilities/UploadImage';
 
 
 
@@ -11,12 +11,28 @@ import UploadImage from './utilities/UploadImage';
     const [itemCategory, onChangeCatText] = React.useState('category');
     const [itemLocation, onChangeLocText] = React.useState('i.e. NH');
     const [selectedDate, setSelectedDate] = React.useState('');
+    const [image, setImage] = React.useState(null);
+
     const onPressLearnMore = () => {
         //go back to home after submitting created report
         navigation.navigate('Home');
       };
+
+      const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing:true,
+            aspect: [4,3],
+            quality: 1,
+        });
+
+        const source = {uri: result.uri};
+        console.log(source);
+        setImage(source);
+        
+    };
   return (
-    <View>
+    <View style = {styles.container}>
         <Text style={{textAlign: 'center', fontWeight: 'bold',
             marginTop: 5, }}>Create Lost Item Report</Text>
 
@@ -50,8 +66,9 @@ import UploadImage from './utilities/UploadImage';
             </View>
             <View>
                 <Text style={{marginTop: 5, marginLeft: 5,}}>Picture</Text>
-                <UploadImage/>
-
+                <TouchableOpacity onPress={pickImage}>
+                  <Image source={require('../assets/imagePicker.png')} style={styles.imagePicker}/>
+                </TouchableOpacity>
             </View>
             <View>
                 <Text style={{marginTop: 5, marginLeft: 5,}}>Date</Text>
@@ -72,10 +89,8 @@ import UploadImage from './utilities/UploadImage';
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#EFF1F8',
+
   },
   input: {
     height: 40,
@@ -96,6 +111,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     marginBottom: 40,
   },
+  imagePicker : {
+    width: 150, 
+    height: 150,
+    borderRadius: 12,
+    marginVertical: 12,
+    marginHorizontal: 12,
+  }
 });
 
 
