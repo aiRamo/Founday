@@ -1,6 +1,7 @@
 import {View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Dimensions, Image, TextInput, ScrollView} from 'react-native';
 import React, {useState} from 'react';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 import { firebase } from './firebaseConfig';
 import SelectDropdown from 'react-native-select-dropdown';
 import { DatePickerModal, TimePickerModal } from "react-native-paper-dates";
@@ -32,9 +33,16 @@ const FoundUploadScreen = ({navigation}) => {
             quality: 0.3,
         });
 
-        const source = {uri: result.uri};
-        console.log(source);
-        setImage(source);
+        if (!result.cancelled) {
+          const resizedImage = await ImageManipulator.manipulateAsync(result.uri, [{ resize: { width: 500 } }], {
+            compress: 0.3,
+            format: ImageManipulator.SaveFormat.JPEG,
+          });
+
+          const source = { uri: resizedImage.uri };
+          console.log(source);
+          setImage(source);
+        }
         
     };
 

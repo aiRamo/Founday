@@ -231,7 +231,7 @@ const getUserData = (uid: string) => {
             <Text style={styles.text}>Your Currently Lost Items:</Text>
             <FlatList
                 horizontal ={true}
-                data={lostItems}
+                data={lostItems.slice().reverse()}
                 renderItem={({item}) =>
                   <Item title={item.title} description={item.description} image={item.image} button = {item.button} onPress={() => navigation.navigate('Lost Report')}
                     imageCategory={item.imageCategory} />}
@@ -243,7 +243,7 @@ const getUserData = (uid: string) => {
             <Text style={styles.text}>Your Currently Found Items:</Text>
             <FlatList
                 horizontal ={true}
-                data={FoundItems}
+                data={FoundItems.slice().reverse()}
                 renderItem={({item}) =>
                   <Item title={item.title} description={item.description} image={item.image} button = {item.button} onPress={() => navigation.navigate('Found Report')} 
                     imageCategory={item.imageCategory} />}
