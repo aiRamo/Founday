@@ -12,11 +12,37 @@ import ClaimsManagement from './Components/ClaimsManagement';
 import MatchingResults from './Components/MatchingResults';
 import PrivateMessage from './Components/PrivateMessage';
 import LostUploadScreen from './Components/LostReport';
+import { firebase } from './Components/firebaseConfig';
+import {ref, onValue} from 'firebase/database';
 
 const Stack = createNativeStackNavigator();
 const { width, height } = Dimensions.get('window');
 
- const App = () => {
+const db = firebase.database()
+
+const App = () => {
+
+  const user = firebase.auth().currentUser;
+  
+
+  const [displayName, setDisplayName] = React.useState('name');
+
+  React.useEffect(() => {
+    if (user){
+      const uid = user.uid;
+      const userPath = 'users/' + uid;
+      const userRef = ref(db, userPath);
+
+      onValue(userRef, (snapshot) => {
+        const userData = snapshot.val();
+        if (userData) {
+          const {firstName} = userData;
+          setDisplayName(firstName);
+        }
+      });
+    }
+  }, []);
+
   return (
     <NavigationContainer>
     <Stack.Navigator
@@ -52,7 +78,7 @@ const { width, height } = Dimensions.get('window');
                   style={styles.profileIcon}
                 />
                 <Text style = {styles.profileText}>
-                  Adrian
+                  {displayName}
                 </Text>
             </View>
             );

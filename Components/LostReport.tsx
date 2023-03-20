@@ -164,10 +164,6 @@ const LostUploadScreen = ({navigation}) => {
     const onTimeDismiss = React.useCallback(() => {
       setTimeVisible(false)
     }, [setTimeVisible]);
-
-    React.useEffect(() => {
-      console.log(image);
-    }, [image]);
   
     const onTimeConfirm = React.useCallback(
       ({ hours, minutes }) => {
@@ -272,7 +268,7 @@ const LostUploadScreen = ({navigation}) => {
                 saveLabel="Save"
                 label="Select Date"
                 animationType="slide"
-                locale="en"
+                locale='en'
               />
               <TimePickerModal
                 visible={timeVisible}
@@ -370,17 +366,19 @@ const styles = StyleSheet.create({
       justifyContent: "flex-start"
     },
     dateHandler: {
-      justifyContent: "flex-start",
+      justifyContent: 'space-between',
+      alignContent: 'center',
       flexDirection: 'row',
+      alignSelf: 'center',
     },
     dateButton: {
-      borderRadius: 8,
+      borderRadius: 3,
         width: 150,
         height: 50,
         backgroundColor: '#687089',
         alignItems:'center',
         justifyContent:'center',
-        marginLeft: 15,
         marginVertical: 10,
+        marginHorizontal: 5,
     }
 })

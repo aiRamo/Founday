@@ -25,6 +25,9 @@ const FoundUploadScreen = ({navigation}) => {
 
     const [uploading, setUploading] = useState(false);
 
+    /* pickImage() uses ImagePicker and ImageManipulator libraries to pick an image from the user's device, resize it, and set it as the state of image.
+    If the user cancels the image picker, nothing happens.
+    */
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -46,9 +49,8 @@ const FoundUploadScreen = ({navigation}) => {
         
     };
 
-    //TODO: when user hits button, upload attributes + filename of image to LostItems/<LostItemUniqueKey>
-    // The atributes to import are author(uid), category, date, description, image(filename or N/A if no image), itemName(title)
-
+    /* uploadItem() checks if all required fields are filled, checks if the selected date and time are not after the current date and time, uploads the image to Firebase 
+    storage if an image is selected, and then creates a new entry in the Firebase database under FoundItems/ with the information provided. */
     const uploadItem = async () => {
       
       if (!(title && description && category && date && time && image)) {
@@ -147,10 +149,13 @@ const FoundUploadScreen = ({navigation}) => {
       navigation.navigate('Home');
     };
 
+    // onDismissSingle() is called when the user dismisses the date picker. It sets the open state to false.
     const onDismissSingle = React.useCallback(() => {
       setOpen(false);
     }, [setOpen]);
   
+    /* onConfirmSingle() is called when the user confirms a selected date. It sets the open state to false, sets the selected date as the state of date, 
+    and sets the dateLabel state to a formatted string of the selected date.*/
     const onConfirmSingle = React.useCallback(
       (params) => {
         setOpen(false);
@@ -161,13 +166,14 @@ const FoundUploadScreen = ({navigation}) => {
       [setOpen, setDate]
     );
 
+    // onTimeDismiss() is called when the user dismisses the time picker. It sets the timeVisible state to false.
+
     const onTimeDismiss = React.useCallback(() => {
       setTimeVisible(false)
     }, [setTimeVisible]);
 
-    React.useEffect(() => {
-      console.log(image);
-    }, [image]);
+    /* onTimeConfirm() is called when the user confirms a selected time. It sets the hours and minutes state to the selected values, 
+    converts the selected time to a formatted string with AM/PM designation, sets the timeVisible state to false, and sets the timeLabel state to the formatted string. */
   
     const onTimeConfirm = React.useCallback(
       ({ hours, minutes }) => {
@@ -252,7 +258,7 @@ const FoundUploadScreen = ({navigation}) => {
                 || <Image source={require('../assets/imagePicker.png')} style = {styles.previewImage}/>}
             </TouchableOpacity>
             
-            <Text style={{marginTop: 5, marginLeft: 5,}}>Date Lost:</Text>
+            <Text style={{marginTop: 5, marginLeft: 5,}}>Date Found:</Text>
             <View style = {styles.dateHandler}>
               <TouchableOpacity style = {styles.dateButton} onPress={() => setOpen(true)} >
                   <Text style={styles.buttonText}>
@@ -372,15 +378,16 @@ const styles = StyleSheet.create({
     dateHandler: {
       justifyContent: "flex-start",
       flexDirection: 'row',
+      alignSelf: 'center',
     },
     dateButton: {
-      borderRadius: 8,
+      borderRadius: 3,
         width: 150,
         height: 50,
         backgroundColor: '#687089',
         alignItems:'center',
         justifyContent:'center',
-        marginLeft: 15,
+        marginHorizontal: 5,
         marginVertical: 10,
     }
 })

@@ -17,15 +17,10 @@ interface LostItem {
 }
 
 // getUserData() used to access the info of the user that just signed in.
-
-const getUserData = (uid: string) => {
-  const userRef = ref(db, `users/${uid}`);
-  return get(userRef);
-};
   
   const { width, height } = Dimensions.get('window');
 
-  // For each card, we check if button == true (which means it is the create report button), if true, change render to handle button pressing.
+  
   const Item = ({title, description, image, button, onPress, imageCategory}) => {
 
     const user = firebase.auth().currentUser;
@@ -41,6 +36,7 @@ const getUserData = (uid: string) => {
       }
     }, [image]);
 
+    // For each card, we check if button == true (which means it is the create report button), if true, change render to handle button pressing.
     return (
     <Card>
       {button ? (
@@ -71,8 +67,6 @@ const getUserData = (uid: string) => {
 
  const Home = ({navigation}) => {
     const [count, setCount] = useState(0);
-    const onPress = () => setCount(prevCount => prevCount + 1);
-    const [userData, setUserData] = useState<any>(null);
     const [lostItems, setLostItems] = useState<LostItem[]>([]);
     const [FoundItems, setFoundItems] = useState<LostItem[]>([]);
 
@@ -95,43 +89,45 @@ const getUserData = (uid: string) => {
           const items = [];
           snapshot.forEach((childSnapshot) => {
             const childData = childSnapshot.val();
-            const item = {
-              title: childData.itemName,
-              description: childData.description,
-              image: null,
-              button: false,
-              imageCategory: "UserLostPhotos",
-            };
-            // Use a switch statement to set the image based on the category of the lost item
-            if (childData.image == 'N/A'){
-              switch (childData.category) {
-                case 'Apparel':
-                  item.image = require('../assets/default-apparel.png');
-                  break;
-                case 'Electronics':
-                  item.image = require('../assets/default-electronics.png');
-                  break;
-                case 'Traversals':
-                  item.image = require('../assets/default-traversals.png');
-                  break;
-                case 'Bags':
-                  item.image = require('../assets/default-bags.png');
-                  break;
-                case 'ID':
-                  item.image = require('../assets/default-ID.png');
-                  break;
-                case 'Keys':
-                  item.image = require('../assets/default-keys.png');
-                  break;
-                default:
-                  Alert.alert(childData.category);
-                  item.image = require('../assets/defaultProfile.png');
-                  break;
+            if (childData.author === uid) {
+              const item = {
+                title: childData.itemName,
+                description: childData.description,
+                image: null,
+                button: false,
+                imageCategory: "UserLostPhotos",
+              };
+              // Use a switch statement to set the image based on the category of the lost item
+              if (childData.image == 'N/A'){
+                switch (childData.category) {
+                  case 'Apparel':
+                    item.image = require('../assets/default-apparel.png');
+                    break;
+                  case 'Electronics':
+                    item.image = require('../assets/default-electronics.png');
+                    break;
+                  case 'Traversals':
+                    item.image = require('../assets/default-traversals.png');
+                    break;
+                  case 'Bags':
+                    item.image = require('../assets/default-bags.png');
+                    break;
+                  case 'ID':
+                    item.image = require('../assets/default-ID.png');
+                    break;
+                  case 'Keys':
+                    item.image = require('../assets/default-keys.png');
+                    break;
+                  default:
+                    Alert.alert(childData.category);
+                    item.image = require('../assets/defaultProfile.png');
+                    break;
+                }
+              } else {
+                item.image = childData.image;
               }
-            } else {
-              item.image = childData.image;
+              items.push(item);
             }
-            items.push(item);
           });
           items.push({
             title: 'Create New Lost Item Report',
@@ -147,43 +143,45 @@ const getUserData = (uid: string) => {
           const items = [];
           snapshot.forEach((childSnapshot) => {
             const childData = childSnapshot.val();
-            const item = {
-              title: childData.itemName,
-              description: childData.description,
-              image: null,
-              button: false,
-              imageCategory: "UserFoundPhotos",
-            };
-            // Use a switch statement to set the image based on the category of the lost item
-            if (childData.image == 'N/A'){
-              switch (childData.category) {
-                case 'Apparel':
-                  item.image = require('../assets/default-apparel.png');
-                  break;
-                case 'Electronics':
-                  item.image = require('../assets/default-electronics.png');
-                  break;
-                case 'Traversals':
-                  item.image = require('../assets/default-traversals.png');
-                  break;
-                case 'Bags':
-                  item.image = require('../assets/default-bags.png');
-                  break;
-                case 'ID':
-                  item.image = require('../assets/default-ID.png');
-                  break;
-                case 'Keys':
-                  item.image = require('../assets/default-keys.png');
-                  break;
-                default:
-                  Alert.alert(childData.category);
-                  item.image = require('../assets/defaultProfile.png');
-                  break;
+            if (childData.author === uid) {
+              const item = {
+                title: childData.itemName,
+                description: childData.description,
+                image: null,
+                button: false,
+                imageCategory: "UserFoundPhotos",
+              };
+              // Use a switch statement to set the image based on the category of the lost item
+              if (childData.image == 'N/A'){
+                switch (childData.category) {
+                  case 'Apparel':
+                    item.image = require('../assets/default-apparel.png');
+                    break;
+                  case 'Electronics':
+                    item.image = require('../assets/default-electronics.png');
+                    break;
+                  case 'Traversals':
+                    item.image = require('../assets/default-traversals.png');
+                    break;
+                  case 'Bags':
+                    item.image = require('../assets/default-bags.png');
+                    break;
+                  case 'ID':
+                    item.image = require('../assets/default-ID.png');
+                    break;
+                  case 'Keys':
+                    item.image = require('../assets/default-keys.png');
+                    break;
+                  default:
+                    Alert.alert(childData.category);
+                    item.image = require('../assets/defaultProfile.png');
+                    break;
+                }
+              } else { //This is where I will DECODE the base64 image in the database and use it for item.image
+                item.image = childData.image;
               }
-            } else { //This is where I will DECODE the base64 image in the database and use it for item.image
-              item.image = childData.image;
+              items.push(item);
             }
-            items.push(item);
           });
           items.push({
             title: 'Create New Found Item Report',
@@ -235,7 +233,7 @@ const getUserData = (uid: string) => {
                 renderItem={({item}) =>
                   <Item title={item.title} description={item.description} image={item.image} button = {item.button} onPress={() => navigation.navigate('Lost Report')}
                     imageCategory={item.imageCategory} />}
-                  snapToInterval={height * 0.46}
+                  snapToInterval={width}
                   decelerationRate="fast"
             />
           </View>
@@ -247,7 +245,7 @@ const getUserData = (uid: string) => {
                 renderItem={({item}) =>
                   <Item title={item.title} description={item.description} image={item.image} button = {item.button} onPress={() => navigation.navigate('Found Report')} 
                     imageCategory={item.imageCategory} />}
-                  snapToInterval={height * 0.46}
+                  snapToInterval={width}
                   decelerationRate="fast"
             />
           </View>
