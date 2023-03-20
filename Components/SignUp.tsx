@@ -1,21 +1,16 @@
-import React, { Component, useState } from 'react';
-import { ref, set, get, push } from 'firebase/database';
+import React, { useState } from 'react';
+import { ref, set, get } from 'firebase/database';
 import { firebase } from './firebaseConfig';
 import { StyleSheet, TextInput, View, Dimensions, Text, Image} from 'react-native';
 import { Divider, Header} from '@rneui/themed';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native';
-import {getStorage, ref as storageReference, uploadBytes } from 'firebase/storage';
 
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 
 const { width, height } = Dimensions.get('window');
 const db = firebase.database();
 const auth = getAuth();
-const storage = getStorage();
-
-
-
 
 const SignUp = ({navigation}) =>  {
 
@@ -24,15 +19,6 @@ const SignUp = ({navigation}) =>  {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [email, setEmail] = useState('');
-    const [image, setImage] = useState('');
-
-    const submitData = () => {
-        const storageRef = storageReference(storage, 'child');
-    
-        uploadBytes(storageRef, image).then((snapshot) =>{
-            alert('Uploaded file!')
-        })
-    }
 
     //createUser() checks fields for correctness then inserts the user's credentials into Firebase via push(ref(), {...})
     const createUser = async ({navigation}) => {
@@ -62,54 +48,6 @@ const SignUp = ({navigation}) =>  {
                     if (!userSnapshot.exists()) {
                         await set(ref(db, path), userObject);
                     }
-
-                // Create subdirectories for lost and found items
-                const lostItemsPath = 'LostItems/';
-                const foundItemsPath ='FoundItems/';
-
-                const lostItemsRef = db.ref(lostItemsPath);
-
-                const foundItemsRef = db.ref(foundItemsPath);
-
-                await Promise.all([
-                    lostItemsRef.push().set({
-                        itemName: 'Necklace',
-                        category: 'Apparel',
-                        description: 'Gold necklace with diamond pendant',
-                        date: new Date().toISOString(),
-                        author: uid,
-                        image: 'uriExample1.jpg',
-                    }),
-                    lostItemsRef.push().set({
-                        itemName: 'Dell Laptop',
-                        category: 'Electronics',
-                        description: 'Dell XPS 15 laptop with black case',
-                        date: new Date().toISOString(),
-                        author: uid,
-                        image: 'N/A',
-                    }),
-                    foundItemsRef.push().set({
-                        itemName: 'Airpods',
-                        category: 'Electronics',
-                        description: 'Airpods with custom evelyn inscription',
-                        date: new Date().toISOString(),
-                        author: uid,
-                        image: 'uriExample3.jpg',
-                    }),
-                    foundItemsRef.push().set({
-                        itemName: 'Samsung Phone',
-                        category: 'Electronics',
-                        description: 'Samsung Galaxy S21 with cracked screen',
-                        date: new Date().toISOString(),
-                        author: uid,
-                        image: 'uriExample4.jpg',
-                    })
-                    
-                ])
-                .catch(error => {
-                    // handle the error
-                    console.error(error);
-                });
 
                 if (!user.emailVerified) {
                     firebase.auth().onAuthStateChanged(function(user) {

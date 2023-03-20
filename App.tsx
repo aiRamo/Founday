@@ -5,13 +5,13 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Home from './Components/Home';
 import Login from './Components/Login';
-import LostReport from './Components/LostReport';
 import Settings from './Components/Settings';
-import FoundReport from './Components/FoundReport';
+import FoundUploadScreen from './Components/FoundReport';
 import SignUp from './Components/SignUp';
 import ClaimsManagement from './Components/ClaimsManagement';
 import MatchingResults from './Components/MatchingResults';
 import PrivateMessage from './Components/PrivateMessage';
+import LostUploadScreen from './Components/LostReport';
 
 const Stack = createNativeStackNavigator();
 const { width, height } = Dimensions.get('window');
@@ -59,8 +59,8 @@ const { width, height } = Dimensions.get('window');
           }
         })}
       />
-      <Stack.Screen name="Lost Report" component={LostReport} options={{title: 'Lost Item Report'}}/>
-      <Stack.Screen name="Found Report" component={FoundReport} options={{title: 'Found Item Report'}}/>
+      <Stack.Screen name="Lost Report" component={LostUploadScreen} options={{title: 'Lost Item Report'}}/>
+      <Stack.Screen name="Found Report" component={FoundUploadScreen} options={{title: 'Found Item Report'}}/>
       <Stack.Screen name="Sign Up" component={SignUp} options={{headerShown: false}}/>
       <Stack.Screen name="User Settings" component={Settings} options={{title: 'Settings'}}/>
       <Stack.Screen name="Claims" component={ClaimsManagement} options={{title: 'Open Claims'}}/>
