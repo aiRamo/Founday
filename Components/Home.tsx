@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, FlatList, ImageBackground, Dimensions, ScrollView, Alert} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, FlatList, ImageBackground, Dimensions, ScrollView, Alert, Image} from 'react-native';
 import Card from './utilities/homepageCard';
 import { firebase } from './firebaseConfig';
 import {get ,ref, onValue} from 'firebase/database';
@@ -15,8 +15,6 @@ interface LostItem {
   button: boolean;
   imageCategory: string;
 }
-
-// getUserData() used to access the info of the user that just signed in.
   
   const { width, height } = Dimensions.get('window');
 
@@ -26,15 +24,62 @@ interface LostItem {
     const user = firebase.auth().currentUser;
     const uid = user?.uid;
     const [imageUrl, setImageUrl] = useState(null);
+    const storageRef = firebase.storage().ref(`${imageCategory}/${uid}/${image}`);
+    const items = db.ref(`${imageCategory === 'UserLostPhotos' ? 'LostItems' : 'FoundItems'}`)
 
     useEffect(() => {
       if (image) {
-        const storageRef = firebase.storage().ref(`${imageCategory}/${uid}/${image}`);
         storageRef.getDownloadURL().then((url) => {
           setImageUrl(url);
         });
       }
     }, [image]);
+
+    //TODO: deleteItem() will delete the the firebase database entity, as well as the storage image.
+
+    const deleteItem = () => {
+      items.once('value', (snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+          const childData = childSnapshot.val();
+
+          if (childData.image === image) {
+            // Delete the item from the Firebase Realtime Database
+            childSnapshot.ref.remove()
+              .then(() => {
+                console.log(`Item with image "${image}" deleted successfully`);
+              })
+              .catch((error) => {
+                console.log(`Error deleting item with image "${image}": ${error.message}`);
+              });
+
+              storageRef.delete()
+              .then(() => {
+                console.log('Image deleted successfully');
+              })
+              .catch((error) => {
+                console.error('Error deleting image: ', error);
+              });
+          } else if (childData.image == 'N/A' && childData.itemName == title && childData.description == description) {
+            // Delete the item from the Firebase Realtime Database
+            childSnapshot.ref.remove()
+              .then(() => {
+                console.log(`Item with name "${title}" deleted successfully`);
+              })
+              .catch((error) => {
+                console.log(`Error deleting item with name "${title}": ${error.message}`);
+              });
+
+              storageRef.delete()
+              .then(() => {
+                console.log('Image deleted successfully');
+              })
+              .catch((error) => {
+                console.error('Error deleting image: ', error);
+              });
+          }
+        });
+      });
+    };
 
     // For each card, we check if button == true (which means it is the create report button), if true, change render to handle button pressing.
     return (
@@ -50,12 +95,22 @@ interface LostItem {
       <View>
         {imageUrl ? (
           <ImageBackground source={{ uri: imageUrl }} style={styles.itemImage}>
-            <Text style={styles.title}>{title}</Text>
+            <View style = {styles.cardHeader}>
+              <Text style={styles.title}>{title}</Text>
+              <TouchableOpacity style = {styles.trashView} onPress = {deleteItem}>
+                <Image source = {require('../assets/trashBin.png')} style = {styles.trashImg}/>
+              </TouchableOpacity>
+            </View>
             <Text style={styles.description}>{description}</Text>
           </ImageBackground>
         ) : (
           <ImageBackground source={image} style={styles.itemImage}>
-            <Text style={styles.title}>{title}</Text>
+            <View style = {styles.cardHeader}>
+              <Text style={styles.title}>{title}</Text>
+              <TouchableOpacity style = {styles.trashView} onPress = {deleteItem}>
+                <Image source = {require('../assets/trashBin.png')} style = {styles.trashImg}/>
+              </TouchableOpacity>
+            </View>
             <Text style={styles.description}>{description}</Text>
           </ImageBackground>
         )}
@@ -233,7 +288,7 @@ interface LostItem {
                 renderItem={({item}) =>
                   <Item title={item.title} description={item.description} image={item.image} button = {item.button} onPress={() => navigation.navigate('Lost Report')}
                     imageCategory={item.imageCategory} />}
-                  snapToInterval={width}
+                  snapToInterval = {(height * 0.3) + 10}
                   decelerationRate="fast"
             />
           </View>
@@ -245,7 +300,7 @@ interface LostItem {
                 renderItem={({item}) =>
                   <Item title={item.title} description={item.description} image={item.image} button = {item.button} onPress={() => navigation.navigate('Found Report')} 
                     imageCategory={item.imageCategory} />}
-                  snapToInterval={width}
+                    snapToInterval = {(height * 0.3) + 10}
                   decelerationRate="fast"
             />
           </View>
@@ -301,29 +356,29 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   title: {
-    fontSize: 25,
+    fontSize: 18,
     color: "#fff",
     marginTop: 5,
-    marginLeft: 15,
+    marginLeft: 5,
     textShadowColor: '#000000',
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 4,
+    textShadowRadius: 2,
   },
   description: {
-    fontSize: 15,
+    fontSize: 12,
     color: "#fff",
     alignSelf: 'flex-start',
-    marginLeft: 15,
+    marginLeft: 5,
     marginBottom: 15,
     textShadowColor: '#000000',
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 4,
+    textShadowRadius: 1,
   },
   itemImage: {
-    minHeight: height * 0.45,
-    maxHeight: height * 0.45,
-    minWidth: height * 0.45,
-    maxWidth: height * 0.45,
+    minHeight: height * 0.3,
+    maxHeight: height * 0.3,
+    minWidth: height * 0.3,
+    maxWidth: height * 0.3,
     justifyContent: 'space-between',
     flexDirection: 'column',
     resizeMode: 'contain',
@@ -331,6 +386,18 @@ const styles = StyleSheet.create({
   buttonText: {
     fontWeight: 'bold',
     color: '#ffffff',
+  },
+  trashView: {
+    width: 50,
+    height: 50,
+  },
+  trashImg: {
+    width: 50,
+    height: 50,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   }
 });
 

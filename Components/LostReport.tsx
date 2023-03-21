@@ -201,7 +201,6 @@ const LostUploadScreen = ({navigation}) => {
                 style={styles.titleTextInput}
                 placeholder="Item title here:"
                 placeholderTextColor="grey"
-                returnKeyType="done"
                 onChangeText={(text) => setTitle(text)}
               />
             </View>
@@ -216,7 +215,6 @@ const LostUploadScreen = ({navigation}) => {
                 numberOfLines={5}
                 multiline={true}
                 blurOnSubmit={true}
-                returnKeyType="done"
                 onChangeText={(text) => setDescription(text)}
               />
             </View>
@@ -268,7 +266,7 @@ const LostUploadScreen = ({navigation}) => {
                 saveLabel="Save"
                 label="Select Date"
                 animationType="slide"
-                locale='en'
+                locale={'en'}
               />
               <TimePickerModal
                 visible={timeVisible}
@@ -279,7 +277,7 @@ const LostUploadScreen = ({navigation}) => {
               />
             </View>
 
-            <View style={{height: 1, width: width, backgroundColor: 'gray', marginVertical: 40}}/>
+            <View style={{height: 1, width: width, backgroundColor: 'gray', marginVertical: height * 0.07}}/>
 
             <View>
                 <TouchableOpacity style={styles.uploadButton} onPress={uploadItem}>
@@ -352,12 +350,14 @@ const styles = StyleSheet.create({
     textAreaContainer: {
       borderColor: 'gray',
       borderWidth: 1,
+      borderRadius: 2,
+      backgroundColor: '#ffffff',
       padding: 5,
       marginVertical: 10,
       marginHorizontal: 15,
     },
     textArea: {
-      height: height * 0.1,
+      height: height * 0.08,
       width: width * 0.8,
       justifyContent: "flex-start"
     },
