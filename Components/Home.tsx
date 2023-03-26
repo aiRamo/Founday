@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, FlatList, ImageBackground, Dimensions, ScrollView, Alert, Image} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, FlatList, ImageBackground, Dimensions, ScrollView, Alert, Image, Modal} from 'react-native';
 import Card from './utilities/homepageCard';
 import { firebase } from './firebaseConfig';
 import {get ,ref, onValue} from 'firebase/database';
@@ -18,6 +18,26 @@ interface LostItem {
   
   const { width, height } = Dimensions.get('window');
 
+  const ConfirmDeleteModal = ({ visible, onConfirm, onCancel }) => {
+    return (
+      <Modal visible={visible} animationType="slide" transparent={true}>
+        <View style={styles.modalWindow} >
+          <View style={styles.modalContent}>
+            <Text style={styles.text}>Are you sure you want to delete this item?</Text>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity onPress={onCancel} style={[styles.button, styles.button]}>
+                <Text style={styles.buttonText}>No</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onConfirm} style={[styles.button, styles.button]}>
+                <Text style={styles.buttonText}>Yes</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    );
+  };
+
   
   const Item = ({title, description, image, button, onPress, imageCategory}) => {
 
@@ -26,6 +46,8 @@ interface LostItem {
     const [imageUrl, setImageUrl] = useState(null);
     const storageRef = firebase.storage().ref(`${imageCategory}/${uid}/${image}`);
     const items = db.ref(`${imageCategory === 'UserLostPhotos' ? 'LostItems' : 'FoundItems'}`)
+    const [confirmVisible, setConfirmVisible] = useState(false);
+
 
     useEffect(() => {
       if (image) {
@@ -51,7 +73,7 @@ interface LostItem {
               .catch((error) => {
                 console.log(`Error deleting item with image "${image}": ${error.message}`);
               });
-
+              //Since there is an associated image, delete the image from storage aswell.
               storageRef.delete()
               .then(() => {
                 console.log('Image deleted successfully');
@@ -67,14 +89,6 @@ interface LostItem {
               })
               .catch((error) => {
                 console.log(`Error deleting item with name "${title}": ${error.message}`);
-              });
-
-              storageRef.delete()
-              .then(() => {
-                console.log('Image deleted successfully');
-              })
-              .catch((error) => {
-                console.error('Error deleting image: ', error);
               });
           }
         });
@@ -97,9 +111,19 @@ interface LostItem {
           <ImageBackground source={{ uri: imageUrl }} style={styles.itemImage}>
             <View style = {styles.cardHeader}>
               <Text style={styles.title}>{title}</Text>
-              <TouchableOpacity style = {styles.trashView} onPress = {deleteItem}>
+              <TouchableOpacity style = {styles.trashView} onPress = {() => setConfirmVisible(true)}>
                 <Image source = {require('../assets/trashBin.png')} style = {styles.trashImg}/>
               </TouchableOpacity>
+
+              <ConfirmDeleteModal
+                visible={confirmVisible}
+                onConfirm={() => {
+                  deleteItem();
+                  setConfirmVisible(false);
+                }}
+                onCancel={() => setConfirmVisible(false)}
+              />
+
             </View>
             <Text style={styles.description}>{description}</Text>
           </ImageBackground>
@@ -107,9 +131,19 @@ interface LostItem {
           <ImageBackground source={image} style={styles.itemImage}>
             <View style = {styles.cardHeader}>
               <Text style={styles.title}>{title}</Text>
-              <TouchableOpacity style = {styles.trashView} onPress = {deleteItem}>
+              <TouchableOpacity style = {styles.trashView} onPress = {() => setConfirmVisible(true)}>
                 <Image source = {require('../assets/trashBin.png')} style = {styles.trashImg}/>
               </TouchableOpacity>
+
+              <ConfirmDeleteModal
+                visible={confirmVisible}
+                onConfirm={() => {
+                  deleteItem();
+                  setConfirmVisible(false);
+                }}
+                onCancel={() => setConfirmVisible(false)}
+              />
+              
             </View>
             <Text style={styles.description}>{description}</Text>
           </ImageBackground>
@@ -124,6 +158,7 @@ interface LostItem {
     const [count, setCount] = useState(0);
     const [lostItems, setLostItems] = useState<LostItem[]>([]);
     const [FoundItems, setFoundItems] = useState<LostItem[]>([]);
+    
 
     useEffect(() => {
       //get the user reference using firebase.auth()
@@ -185,7 +220,7 @@ interface LostItem {
             }
           });
           items.push({
-            title: 'Create New Lost Item Report',
+            title: 'Create New Lost Item',
             description: 'Have a new item? Create here:',
             image: require('../assets/report-addition.png'),
             imageCategory: "UserLostPhotos",
@@ -239,7 +274,7 @@ interface LostItem {
             }
           });
           items.push({
-            title: 'Create New Found Item Report',
+            title: 'Create New Found Item',
             description: 'Have a new item? Create here:',
             image: require('../assets/report-addition.png'),
             button: true,
@@ -356,23 +391,23 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   title: {
-    fontSize: 18,
+    fontSize: 24,
     color: "#fff",
     marginTop: 5,
     marginLeft: 5,
     textShadowColor: '#000000',
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 2,
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 3,
   },
   description: {
-    fontSize: 12,
+    fontSize: 16,
     color: "#fff",
     alignSelf: 'flex-start',
     marginLeft: 5,
     marginBottom: 15,
     textShadowColor: '#000000',
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 1,
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 3,
   },
   itemImage: {
     minHeight: height * 0.3,
@@ -398,6 +433,17 @@ const styles = StyleSheet.create({
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  modalContent: {
+    alignSelf: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#EFF1F8',
+  },
+  modalWindow: {
+    alignSelf: 'center',
+    height: height,
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   }
 });
 
