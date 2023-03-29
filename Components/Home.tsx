@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, FlatList, ImageBackground, Dimensions, ScrollView, Alert} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, FlatList, ImageBackground, Dimensions, ScrollView, Alert, Image, Modal} from 'react-native';
 import Card from './utilities/homepageCard';
 import { firebase } from './firebaseConfig';
 import {get ,ref, onValue} from 'firebase/database';
@@ -15,32 +15,87 @@ interface LostItem {
   button: boolean;
   imageCategory: string;
 }
-
-// getUserData() used to access the info of the user that just signed in.
-
-const getUserData = (uid: string) => {
-  const userRef = ref(db, `users/${uid}`);
-  return get(userRef);
-};
   
   const { width, height } = Dimensions.get('window');
 
-  // For each card, we check if button == true (which means it is the create report button), if true, change render to handle button pressing.
+  const ConfirmDeleteModal = ({ visible, onConfirm, onCancel }) => {
+    return (
+      <Modal visible={visible} animationType="slide" transparent={true}>
+        <View style={styles.modalWindow} >
+          <View style={styles.modalContent}>
+            <Text style={styles.text}>Are you sure you want to delete this item?</Text>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity onPress={onCancel} style={[styles.button, styles.button]}>
+                <Text style={styles.buttonText}>No</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onConfirm} style={[styles.button, styles.button]}>
+                <Text style={styles.buttonText}>Yes</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    );
+  };
+
+  
   const Item = ({title, description, image, button, onPress, imageCategory}) => {
 
     const user = firebase.auth().currentUser;
     const uid = user?.uid;
     const [imageUrl, setImageUrl] = useState(null);
+    const storageRef = firebase.storage().ref(`${imageCategory}/${uid}/${image}`);
+    const items = db.ref(`${imageCategory === 'UserLostPhotos' ? 'LostItems' : 'FoundItems'}`)
+    const [confirmVisible, setConfirmVisible] = useState(false);
+
 
     useEffect(() => {
       if (image) {
-        const storageRef = firebase.storage().ref(`${imageCategory}/${uid}/${image}`);
         storageRef.getDownloadURL().then((url) => {
           setImageUrl(url);
         });
       }
     }, [image]);
 
+    //TODO: deleteItem() will delete the the firebase database entity, as well as the storage image.
+
+    const deleteItem = () => {
+      items.once('value', (snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+          const childData = childSnapshot.val();
+
+          if (childData.image === image) {
+            // Delete the item from the Firebase Realtime Database
+            childSnapshot.ref.remove()
+              .then(() => {
+                console.log(`Item with image "${image}" deleted successfully`);
+              })
+              .catch((error) => {
+                console.log(`Error deleting item with image "${image}": ${error.message}`);
+              });
+              //Since there is an associated image, delete the image from storage aswell.
+              storageRef.delete()
+              .then(() => {
+                console.log('Image deleted successfully');
+              })
+              .catch((error) => {
+                console.error('Error deleting image: ', error);
+              });
+          } else if (childData.image == 'N/A' && childData.itemName == title && childData.description == description) {
+            // Delete the item from the Firebase Realtime Database
+            childSnapshot.ref.remove()
+              .then(() => {
+                console.log(`Item with name "${title}" deleted successfully`);
+              })
+              .catch((error) => {
+                console.log(`Error deleting item with name "${title}": ${error.message}`);
+              });
+          }
+        });
+      });
+    };
+
+    // For each card, we check if button == true (which means it is the create report button), if true, change render to handle button pressing.
     return (
     <Card>
       {button ? (
@@ -54,12 +109,42 @@ const getUserData = (uid: string) => {
       <View>
         {imageUrl ? (
           <ImageBackground source={{ uri: imageUrl }} style={styles.itemImage}>
-            <Text style={styles.title}>{title}</Text>
+            <View style = {styles.cardHeader}>
+              <Text style={styles.title}>{title}</Text>
+              <TouchableOpacity style = {styles.trashView} onPress = {() => setConfirmVisible(true)}>
+                <Image source = {require('../assets/trashBin.png')} style = {styles.trashImg}/>
+              </TouchableOpacity>
+
+              <ConfirmDeleteModal
+                visible={confirmVisible}
+                onConfirm={() => {
+                  deleteItem();
+                  setConfirmVisible(false);
+                }}
+                onCancel={() => setConfirmVisible(false)}
+              />
+
+            </View>
             <Text style={styles.description}>{description}</Text>
           </ImageBackground>
         ) : (
           <ImageBackground source={image} style={styles.itemImage}>
-            <Text style={styles.title}>{title}</Text>
+            <View style = {styles.cardHeader}>
+              <Text style={styles.title}>{title}</Text>
+              <TouchableOpacity style = {styles.trashView} onPress = {() => setConfirmVisible(true)}>
+                <Image source = {require('../assets/trashBin.png')} style = {styles.trashImg}/>
+              </TouchableOpacity>
+
+              <ConfirmDeleteModal
+                visible={confirmVisible}
+                onConfirm={() => {
+                  deleteItem();
+                  setConfirmVisible(false);
+                }}
+                onCancel={() => setConfirmVisible(false)}
+              />
+              
+            </View>
             <Text style={styles.description}>{description}</Text>
           </ImageBackground>
         )}
@@ -71,10 +156,9 @@ const getUserData = (uid: string) => {
 
  const Home = ({navigation}) => {
     const [count, setCount] = useState(0);
-    const onPress = () => setCount(prevCount => prevCount + 1);
-    const [userData, setUserData] = useState<any>(null);
     const [lostItems, setLostItems] = useState<LostItem[]>([]);
     const [FoundItems, setFoundItems] = useState<LostItem[]>([]);
+    
 
     useEffect(() => {
       //get the user reference using firebase.auth()
@@ -95,46 +179,48 @@ const getUserData = (uid: string) => {
           const items = [];
           snapshot.forEach((childSnapshot) => {
             const childData = childSnapshot.val();
-            const item = {
-              title: childData.itemName,
-              description: childData.description,
-              image: null,
-              button: false,
-              imageCategory: "UserLostPhotos",
-            };
-            // Use a switch statement to set the image based on the category of the lost item
-            if (childData.image == 'N/A'){
-              switch (childData.category) {
-                case 'Apparel':
-                  item.image = require('../assets/default-apparel.png');
-                  break;
-                case 'Electronics':
-                  item.image = require('../assets/default-electronics.png');
-                  break;
-                case 'Traversals':
-                  item.image = require('../assets/default-traversals.png');
-                  break;
-                case 'Bags':
-                  item.image = require('../assets/default-bags.png');
-                  break;
-                case 'ID':
-                  item.image = require('../assets/default-ID.png');
-                  break;
-                case 'Keys':
-                  item.image = require('../assets/default-keys.png');
-                  break;
-                default:
-                  Alert.alert(childData.category);
-                  item.image = require('../assets/defaultProfile.png');
-                  break;
+            if (childData.author === uid) {
+              const item = {
+                title: childData.itemName,
+                description: childData.description,
+                image: null,
+                button: false,
+                imageCategory: "UserLostPhotos",
+              };
+              // Use a switch statement to set the image based on the category of the lost item
+              if (childData.image == 'N/A'){
+                switch (childData.category) {
+                  case 'Apparel':
+                    item.image = require('../assets/default-apparel.png');
+                    break;
+                  case 'Electronics':
+                    item.image = require('../assets/default-electronics.png');
+                    break;
+                  case 'Traversals':
+                    item.image = require('../assets/default-traversals.png');
+                    break;
+                  case 'Bags':
+                    item.image = require('../assets/default-bags.png');
+                    break;
+                  case 'ID':
+                    item.image = require('../assets/default-ID.png');
+                    break;
+                  case 'Keys':
+                    item.image = require('../assets/default-keys.png');
+                    break;
+                  default:
+                    Alert.alert(childData.category);
+                    item.image = require('../assets/defaultProfile.png');
+                    break;
+                }
+              } else {
+                item.image = childData.image;
               }
-            } else {
-              item.image = childData.image;
+              items.push(item);
             }
-            items.push(item);
           });
           items.push({
-            title: 'Create New Lost Item Report',
+            title: 'Create New Lost Item',
             description: 'Have a new item? Create here:',
             image: require('../assets/report-addition.png'),
             imageCategory: "UserLostPhotos",
@@ -147,46 +233,48 @@ const getUserData = (uid: string) => {
           const items = [];
           snapshot.forEach((childSnapshot) => {
             const childData = childSnapshot.val();
-            const item = {
-              title: childData.itemName,
-              description: childData.description,
-              image: null,
-              button: false,
-              imageCategory: "UserFoundPhotos",
-            };
-            // Use a switch statement to set the image based on the category of the lost item
-            if (childData.image == 'N/A'){
-              switch (childData.category) {
-                case 'Apparel':
-                  item.image = require('../assets/default-apparel.png');
-                  break;
-                case 'Electronics':
-                  item.image = require('../assets/default-electronics.png');
-                  break;
-                case 'Traversals':
-                  item.image = require('../assets/default-traversals.png');
-                  break;
-                case 'Bags':
-                  item.image = require('../assets/default-bags.png');
-                  break;
-                case 'ID':
-                  item.image = require('../assets/default-ID.png');
-                  break;
-                case 'Keys':
-                  item.image = require('../assets/default-keys.png');
-                  break;
-                default:
-                  Alert.alert(childData.category);
-                  item.image = require('../assets/defaultProfile.png');
-                  break;
+            if (childData.author === uid) {
+              const item = {
+                title: childData.itemName,
+                description: childData.description,
+                image: null,
+                button: false,
+                imageCategory: "UserFoundPhotos",
+              };
+              // Use a switch statement to set the image based on the category of the lost item
+              if (childData.image == 'N/A'){
+                switch (childData.category) {
+                  case 'Apparel':
+                    item.image = require('../assets/default-apparel.png');
+                    break;
+                  case 'Electronics':
+                    item.image = require('../assets/default-electronics.png');
+                    break;
+                  case 'Traversals':
+                    item.image = require('../assets/default-traversals.png');
+                    break;
+                  case 'Bags':
+                    item.image = require('../assets/default-bags.png');
+                    break;
+                  case 'ID':
+                    item.image = require('../assets/default-ID.png');
+                    break;
+                  case 'Keys':
+                    item.image = require('../assets/default-keys.png');
+                    break;
+                  default:
+                    Alert.alert(childData.category);
+                    item.image = require('../assets/defaultProfile.png');
+                    break;
+                }
+              } else { //This is where I will DECODE the base64 image in the database and use it for item.image
+                item.image = childData.image;
               }
-            } else { //This is where I will DECODE the base64 image in the database and use it for item.image
-              item.image = childData.image;
+              items.push(item);
             }
-            items.push(item);
           });
           items.push({
-            title: 'Create New Found Item Report',
+            title: 'Create New Found Item',
             description: 'Have a new item? Create here:',
             image: require('../assets/report-addition.png'),
             button: true,
@@ -231,11 +319,11 @@ const getUserData = (uid: string) => {
             <Text style={styles.text}>Your Currently Lost Items:</Text>
             <FlatList
                 horizontal ={true}
-                data={lostItems}
+                data={lostItems.slice().reverse()}
                 renderItem={({item}) =>
                   <Item title={item.title} description={item.description} image={item.image} button = {item.button} onPress={() => navigation.navigate('Lost Report')}
                     imageCategory={item.imageCategory} />}
-                  snapToInterval={height * 0.46}
+                  snapToInterval = {(height * 0.3) + 10}
                   decelerationRate="fast"
             />
           </View>
@@ -243,11 +331,11 @@ const getUserData = (uid: string) => {
             <Text style={styles.text}>Your Currently Found Items:</Text>
             <FlatList
                 horizontal ={true}
-                data={FoundItems}
+                data={FoundItems.slice().reverse()}
                 renderItem={({item}) =>
                   <Item title={item.title} description={item.description} image={item.image} button = {item.button} onPress={() => navigation.navigate('Found Report')} 
                     imageCategory={item.imageCategory} />}
-                  snapToInterval={height * 0.46}
+                    snapToInterval = {(height * 0.3) + 10}
                   decelerationRate="fast"
             />
           </View>
@@ -303,29 +391,29 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   title: {
-    fontSize: 25,
+    fontSize: 24,
     color: "#fff",
     marginTop: 5,
-    marginLeft: 15,
+    marginLeft: 5,
     textShadowColor: '#000000',
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 4,
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 3,
   },
   description: {
-    fontSize: 15,
+    fontSize: 16,
     color: "#fff",
     alignSelf: 'flex-start',
-    marginLeft: 15,
+    marginLeft: 5,
     marginBottom: 15,
     textShadowColor: '#000000',
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 4,
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 3,
   },
   itemImage: {
-    minHeight: height * 0.45,
-    maxHeight: height * 0.45,
-    minWidth: height * 0.45,
-    maxWidth: height * 0.45,
+    minHeight: height * 0.3,
+    maxHeight: height * 0.3,
+    minWidth: height * 0.3,
+    maxWidth: height * 0.3,
     justifyContent: 'space-between',
     flexDirection: 'column',
     resizeMode: 'contain',
@@ -333,6 +421,29 @@ const styles = StyleSheet.create({
   buttonText: {
     fontWeight: 'bold',
     color: '#ffffff',
+  },
+  trashView: {
+    width: 50,
+    height: 50,
+  },
+  trashImg: {
+    width: 50,
+    height: 50,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  modalContent: {
+    alignSelf: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#EFF1F8',
+  },
+  modalWindow: {
+    alignSelf: 'center',
+    height: height,
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   }
 });
 

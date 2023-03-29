@@ -17,8 +17,8 @@ const Card = ({ children }: CardProps) => {
 
 const styles = StyleSheet.create({
     card: {
-        minHeight: height * 0.45,
-        minWidth: height * 0.45,
+        minHeight: height * 0.3,
+        minWidth: height * 0.3,
         shadowOffset: { width: 0, height: 1},
         shadowColor: '#000000',
         shadowOpacity: 0.8,

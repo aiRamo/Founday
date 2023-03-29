@@ -5,19 +5,45 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Home from './Components/Home';
 import Login from './Components/Login';
-import LostReport from './Components/LostReport';
 import Settings from './Components/Settings';
-import FoundReport from './Components/FoundReport';
+import FoundUploadScreen from './Components/FoundReport';
 import SignUp from './Components/SignUp';
 import ClaimsManagement from './Components/ClaimsManagement';
 import MatchingResults from './Components/MatchingResults';
 import PrivateMessage from './Components/PrivateMessage';
 import ChatScreen from './Components/ChatScreen'
+import LostUploadScreen from './Components/LostReport';
+import { firebase } from './Components/firebaseConfig';
+import {ref, onValue} from 'firebase/database';
 
 const Stack = createNativeStackNavigator();
 const { width, height } = Dimensions.get('window');
 
- const App = () => {
+const db = firebase.database()
+
+const App = () => {
+
+  const user = firebase.auth().currentUser;
+  
+
+  const [displayName, setDisplayName] = React.useState('name');
+
+  React.useEffect(() => {
+    if (user){
+      const uid = user.uid;
+      const userPath = 'users/' + uid;
+      const userRef = ref(db, userPath);
+
+      onValue(userRef, (snapshot) => {
+        const userData = snapshot.val();
+        if (userData) {
+          const {firstName} = userData;
+          setDisplayName(firstName);
+        }
+      });
+    }
+  }, []);
+
   return (
     <NavigationContainer>
     <Stack.Navigator
@@ -53,15 +79,15 @@ const { width, height } = Dimensions.get('window');
                   style={styles.profileIcon}
                 />
                 <Text style = {styles.profileText}>
-                  Adrian
+                  {displayName}
                 </Text>
             </View>
             );
           }
         })}
       />
-      <Stack.Screen name="Lost Report" component={LostReport} options={{title: 'Lost Item Report'}}/>
-      <Stack.Screen name="Found Report" component={FoundReport} options={{title: 'Found Item Report'}}/>
+      <Stack.Screen name="Lost Report" component={LostUploadScreen} options={{title: 'Lost Item Report'}}/>
+      <Stack.Screen name="Found Report" component={FoundUploadScreen} options={{title: 'Found Item Report'}}/>
       <Stack.Screen name="Sign Up" component={SignUp} options={{headerShown: false}}/>
       <Stack.Screen name="User Settings" component={Settings} options={{title: 'Settings'}}/>
       <Stack.Screen name="Claims" component={ClaimsManagement} options={{title: 'Open Claims'}}/>
