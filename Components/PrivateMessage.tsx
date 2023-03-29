@@ -1,18 +1,69 @@
-import React, {useState} from 'react';
-import { StyleSheet, Text, View, Image, Button, TouchableOpacity } from 'react-native';
+import React, {useEffect, useCallback, useLayoutEffect, useState} from 'react';
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { Card, Button, Avatar } from 'react-native-paper';
+import { GiftedChat } from 'react-native-gifted-chat';
+import { IconButton } from 'react-native-paper';
+import { firebase, auth, db } from './firebaseConfig'
+import { collection, addDoc, getDocs, query, orderBy, onSnapshot } from 'firebase/firestore';
+//import firestore from '@react-native-firebase/firestore';
 
  const PrivateMessage = ({navigation}) => {
+  const [messages, setMessages] = useState([]);
+
+  useLayoutEffect(() => {
+
+    const q = query(collection(db, 'chats'), orderBy('createdAt', 'desc'));
+    /* const unsubscribe = onSnapshot(q, (snapshot) => setMessages(
+        snapshot.docs.map(doc => ({
+            _id: doc.data()._id,
+            createdAt: doc.data().createdAt.toDate(),
+            text: doc.data().text,
+            user: doc.data().user,
+        }))
+    )); */
+
+    return () => {
+      // unsubscribe();
+    };
+
+}, [navigation]);
+
+  const onSend = useCallback((messages = []) => {
+    setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
+    const { _id, createdAt, text, user,} = messages[0]
+
+    addDoc(collection(db, 'chats'), { _id, createdAt,  text, user });
+}, []);
 
   return (
-    <View style={styles.container}>
-        <View style={styles.vertical}>
-            <Image source={{uri: 'https://randomuser.me/api/portraits/men/1.jpg'}} style={styles.img}/>
-            <Button
-                title="Logout"
-                onPress={() =>
-                    navigation.navigate('Login')}
-            />
-        </View>
+    <View >
+        
+              <Card style={styles.card}>
+                  <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
+                  <Card.Content>
+                    <Text style={{fontSize: 15, color: 'black', fontWeight: 'bold',}} >Apple earpods</Text>
+                    <Text style={{fontSize: 13, color: 'gray',}} >1 hour ago</Text>
+                  </Card.Content>
+              </Card>
+        
+
+        {/* <GiftedChat 
+          messages={messages}
+          showAvatarForEveryMessage={true}
+          onSend={messages => onSend(messages)}
+           user={{
+              _id: auth?.currentUser?.email,
+              name: auth?.currentUser?.displayName,
+              avatar: auth?.currentUser?.photoURL
+          }}  
+        /> */}
+
+        <IconButton
+          icon='message-plus'
+          size={28}
+          //color='#fffff'
+          onPress={() => navigation.navigate('Chat Room')}
+        />
 
     </View>
 
@@ -23,7 +74,6 @@ import { StyleSheet, Text, View, Image, Button, TouchableOpacity } from 'react-n
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -43,7 +93,10 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 100 / 2,
-  }
+  },
+  card: {
+    marginTop: 15,
+  },
 });
 
 
