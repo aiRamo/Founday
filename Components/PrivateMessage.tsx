@@ -1,15 +1,15 @@
 import React, {useEffect, useCallback, useLayoutEffect, useState} from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-import { Card, Button, Avatar } from 'react-native-paper';
+import { StyleSheet, Text, View, Image, TouchableOpacity, FlatList } from 'react-native';
+import { Card, Button, Avatar, List, Divider } from 'react-native-paper';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { IconButton } from 'react-native-paper';
 import { firebase, auth, db } from './firebaseConfig'
 import { collection, addDoc, getDocs, query, orderBy, onSnapshot } from 'firebase/firestore';
-//import firestore from '@react-native-firebase/firestore';
 
  const PrivateMessage = ({navigation}) => {
   const [messages, setMessages] = useState([]);
 
+  // here
   useLayoutEffect(() => {
 
     const q = query(collection(db, 'chats'), orderBy('createdAt', 'desc'));
@@ -34,6 +34,7 @@ import { collection, addDoc, getDocs, query, orderBy, onSnapshot } from 'firebas
 
     addDoc(collection(db, 'chats'), { _id, createdAt,  text, user });
 }, []);
+// here
 
   return (
     <View >
@@ -97,6 +98,7 @@ const styles = StyleSheet.create({
   card: {
     marginTop: 15,
   },
+
 });
 
 
