@@ -2,6 +2,8 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
 import 'firebase/compat/storage';
+import { initializeFirestore } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
     apiKey: "AIzaSyDQqfRPGCpR0qpCOaloCD4eiFRCYybQr1I",
@@ -16,4 +18,7 @@ const firebaseConfig = {
 
   firebase.initializeApp(firebaseConfig);
 
-  export {firebase};
+  const auth = getAuth(firebase.initializeApp(firebaseConfig));
+  const db = initializeFirestore(firebase.initializeApp(firebaseConfig), {experimentalForceLongPolling: true});
+
+  export {firebase, auth, db};

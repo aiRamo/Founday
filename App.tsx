@@ -11,6 +11,7 @@ import SignUp from './Components/SignUp';
 import ClaimsManagement from './Components/ClaimsManagement';
 import MatchingResults from './Components/MatchingResults';
 import PrivateMessage from './Components/PrivateMessage';
+import ChatScreen from './Components/ChatScreen'
 import LostUploadScreen from './Components/LostReport';
 import { firebase } from './Components/firebaseConfig';
 import {ref, onValue} from 'firebase/database';
@@ -91,7 +92,8 @@ const App = () => {
       <Stack.Screen name="User Settings" component={Settings} options={{title: 'Settings'}}/>
       <Stack.Screen name="Claims" component={ClaimsManagement} options={{title: 'Open Claims'}}/>
       <Stack.Screen name="Matches" component={MatchingResults} options={{title: 'Possible Matching Items'}}/>
-      <Stack.Screen name="Private Message" component={PrivateMessage} options={{title: 'Username'}}/>
+      <Stack.Screen name="Private Message" component={PrivateMessage} options={{title: 'Private Message'}}/>
+      <Stack.Screen name="Chat Room" component={ChatScreen} options={{title: 'chat room'}}/>
     </Stack.Navigator>
     </NavigationContainer>
   );

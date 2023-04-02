@@ -5,6 +5,7 @@ import { AntDesign } from '@expo/vector-icons';
  const ClaimsManagement = ({navigation}) => {
   const goToPrivateMessage = () => {
     //go to chat
+    //alert('go to chat')
     navigation.navigate('Private Message');
   }
 
@@ -27,8 +28,8 @@ import { AntDesign } from '@expo/vector-icons';
             <AntDesign 
                 name="pushpin" 
                 size={25} 
-                onPress={() => {goToPrivateMessage}
-                } style={{marginTop: 10, alignItems: 'flex-end'}} />
+                onPress={() => navigation.navigate('Chat Room')} 
+                style={{marginTop: 10, alignItems: 'flex-end'}} />
         </View>
         {/* item you lost 2*/}
         <View style={styles.container}>
@@ -45,8 +46,8 @@ import { AntDesign } from '@expo/vector-icons';
             <AntDesign 
                 name="pushpin" 
                 size={25} 
-                onPress={() => {goToPrivateMessage}
-                } style={{marginTop: 10, alignItems: 'flex-end'}} />
+                onPress={() => navigation.navigate('Chat Room')} 
+                style={{marginTop: 10, alignItems: 'flex-end'}} />
         </View>
 
          {/* Items you Found View*/}
@@ -70,8 +71,8 @@ import { AntDesign } from '@expo/vector-icons';
                 <AntDesign 
                     name="pushpin" 
                     size={25} 
-                    onPress={() => {goToPrivateMessage}
-                    } style={{marginTop: 10, alignItems: 'flex-end'}} />
+                    onPress={() => navigation.navigate('Chat Room')}
+                    style={{marginTop: 10, alignItems: 'flex-end'}} />
             </View>
 
             {/* item found 2 layout*/}
@@ -89,8 +90,8 @@ import { AntDesign } from '@expo/vector-icons';
                 <AntDesign 
                     name="pushpin" 
                     size={25} 
-                    onPress={() => {goToPrivateMessage}
-                    } style={{marginTop: 10, alignItems: 'flex-end'}} />
+                    onPress={() => navigation.navigate('Chat Room')}
+                    style={{marginTop: 10, alignItems: 'flex-end'}} />
             </View>
 
             {/* item found 3 layout*/}
@@ -108,8 +109,8 @@ import { AntDesign } from '@expo/vector-icons';
                 <AntDesign 
                     name="pushpin" 
                     size={25} 
-                    onPress={() => {goToPrivateMessage}
-                    } style={{marginTop: 10, alignItems: 'flex-end'}} />
+                    onPress={() => navigation.navigate('Chat Room')}
+                    style={{marginTop: 10, alignItems: 'flex-end'}} />
             </View>
 
             {/* item found 2 layout*/}
@@ -127,8 +128,8 @@ import { AntDesign } from '@expo/vector-icons';
                 <AntDesign 
                     name="pushpin" 
                     size={25} 
-                    onPress={() => {goToPrivateMessage}
-                    } style={{marginTop: 10, alignItems: 'flex-end'}} />
+                    onPress={() => navigation.navigate('Chat Room')}
+                    style={{marginTop: 10, alignItems: 'flex-end'}} />
             </View>
         </ScrollView>
 
