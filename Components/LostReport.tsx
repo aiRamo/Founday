@@ -1,5 +1,5 @@
-import {View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Dimensions, Image, TextInput, ScrollView} from 'react-native';
-import React, {useState} from 'react';
+import {View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Dimensions, Image, TextInput, ScrollView, Modal, ImageBackground, Platform} from 'react-native';
+import React, {useState, useCallback, useEffect} from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { firebase } from './firebaseConfig';
@@ -8,6 +8,9 @@ import { DatePickerModal, TimePickerModal } from "react-native-paper-dates";
 
 const { width, height } = Dimensions.get('window');
 const categories = ["Apparel","Electronics","ID/Documents","Traversals","Keys","Purse/Bags"];
+
+
+
 
 const LostUploadScreen = ({navigation}) => {
     const [title, setTitle] = useState(null);
@@ -23,7 +26,81 @@ const LostUploadScreen = ({navigation}) => {
     const [dateLabel, setDateLabel] = useState('Choose a date:');
     const [timeLabel, setTimeLabel] = useState('Choose a time:');
 
+    const [location, setLocation] = useState('Location:');
+    const [selectedLocation, setSelectedLocation] = useState(null);
+    
+
     const [uploading, setUploading] = useState(false);
+
+    const [confirmVisible, setConfirmVisible] = useState(false);
+
+    useEffect(() => {
+      let mapWidth;
+      let mapHeight;
+      if (width > height) { // web mode
+        mapWidth = width
+        mapHeight = width / 1.19
+      } else { //mobile mode
+        mapWidth = width * 2
+        mapHeight = (width / 1.19) * 2
+      }
+      if (selectedLocation) {
+        setLocation(`${(selectedLocation.x / mapWidth).toFixed(7)}, ${(selectedLocation.y / mapHeight).toFixed(7)}`);
+      }
+    }, [selectedLocation]);
+
+    const handleConfirmLocation = useCallback(() => {
+      if (selectedLocation) {
+        setLocation(`${selectedLocation.x}, ${selectedLocation.y}`);
+      }
+      setConfirmVisible(false);
+    }, [selectedLocation]);
+
+    const LocationPickerModal = ({ visible, onCancel }) => {
+      const [pinCoordinates, setPinCoordinates] = useState({});
+    
+      const storeLocation = (event) => {
+        if (Platform.OS === 'web'){
+          const { left, top } = event.currentTarget.getBoundingClientRect();
+          let locationX = event.clientX - left;
+          let locationY = event.clientY - top;
+
+          setPinCoordinates({ x: locationX, y: locationY });
+          
+        } else {
+          let locationX = event.nativeEvent.locationX;
+          let locationY = event.nativeEvent.locationY;
+          console.log(`hersde Pin dropped at (${locationX}, ${locationY})`);
+          setPinCoordinates({ x: locationX, y: locationY });
+        }
+      };
+    
+      const mapWindowStyle = width > height ? styles.mapWindowWeb : styles.mapWindowMobile;
+      const mapSliderStyle = width > height ? styles.mapSliderWeb : styles.mapSliderMobile;
+      const isWeb = (width > height);
+      const pinYCoord = width > height ? 80 : 40;
+    
+      return (
+        <Modal visible={visible} animationType="fade" transparent={true}>
+          <ScrollView style = {mapSliderStyle} horizontal = {!isWeb} bounces = {false}>
+            <View style={styles.modalWindow}>
+              <TouchableOpacity onPress={storeLocation} style={mapWindowStyle} activeOpacity={1}>
+                <ImageBackground style={styles.campusMap} source={require('../assets/UTA-MAP.png')}>
+                  {pinCoordinates.x && (
+                    <Image style={[styles.pinImage, { left: pinCoordinates.x - 20, top: pinCoordinates.y - pinYCoord}]} source={require('../assets/pin.png')} />
+                  )}
+                </ImageBackground>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+          <View style = {styles.confirmButtonWindow}>
+            <TouchableOpacity style={styles.confirmButton} onPress={() => {onCancel(pinCoordinates);}}>
+              <Text style={styles.buttonText}>Confirm</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
+      );
+    };
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -125,6 +202,7 @@ const LostUploadScreen = ({navigation}) => {
                 category: category,
                 description: description,
                 date: date,
+                location: location,
                 author: uid,
                 image: image ? image?.uri.substring(image.uri.lastIndexOf('/')+1) : 'N/A'
             })
@@ -277,7 +355,18 @@ const LostUploadScreen = ({navigation}) => {
               />
             </View>
 
-            <View style={{height: 1, width: width, backgroundColor: 'gray', marginVertical: height * 0.07}}/>
+            <TouchableOpacity style = {styles.dateButton} onPress={ () => setConfirmVisible(true)}>
+              <Text style={styles.buttonText}>
+                {location}
+              </Text>
+            </TouchableOpacity>
+
+            <LocationPickerModal
+                visible={confirmVisible}
+                onCancel={(location) => { setSelectedLocation(location); handleConfirmLocation(); setConfirmVisible(false);}}
+            />
+
+            <View style={{height: 1, width: width, backgroundColor: 'gray', marginVertical: height * 0.01}}/>
 
             <View>
                 <TouchableOpacity style={styles.uploadButton} onPress={uploadItem}>
@@ -380,5 +469,57 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         marginVertical: 10,
         marginHorizontal: 5,
+    },
+    mapWindowMobile: {
+      width: width * 2,
+      height: (width / 1.19) * 2, //1.19 is image height compared to width.
+      alignSelf: 'center',
+    },
+    mapWindowWeb: {
+      width: width, //1.19 is image height compared to width.
+      height: (width / 1.19), 
+      alignSelf: 'center',
+    },
+    campusMap: {
+      resizeMode: 'contain',
+      width: '100%',
+      height: '100%',
+      alignSelf: 'center',
+      backgroundColor: '#000',
+      marginTop: 40,
+    },
+    modalWindow: {
+      alignSelf: 'center',
+      alignContent: 'center',
+      height: '100%',
+      width: '100%',
+      justifyContent: 'center',
+      backgroundColor: 'rgba(	0, 0, 0, 0.8)',
+    },
+    confirmButton: {
+      borderRadius: 3,
+      width: 150,
+      height: 50,
+      backgroundColor: '#687089',
+      alignItems:'center',
+      justifyContent:'center',
+      alignSelf: 'center',
+      marginBottom: 40,
+      marginHorizontal: 5,
+    },
+    pinImage: {
+      position: 'absolute',
+      width: 40,
+      height: 40,
+    },
+    mapSliderMobile: {
+      width: '100%',
+    },
+    mapSliderWeb: {
+      height: '100%',
+      width: '100%',
+    },
+    confirmButtonWindow: {
+      backgroundColor: 'rgba(	0, 0, 0, 0.8)'
     }
 })

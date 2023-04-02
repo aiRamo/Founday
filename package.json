@@ -30,6 +30,7 @@
     "react-native-date-picker": "^4.2.9",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^2.9.0",
+    "react-native-image-pan-zoom": "^2.1.12",
     "react-native-image-picker": "^5.1.0",
     "react-native-modal-datetime-picker": "^14.0.1",
     "react-native-modern-datepicker": "^1.0.0-beta.91",

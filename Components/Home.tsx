@@ -18,17 +18,17 @@ interface LostItem {
   
   const { width, height } = Dimensions.get('window');
 
-  const ConfirmDeleteModal = ({ visible, onConfirm, onCancel }) => {
+  const ConfirmDeleteModal = ({ visible, onConfirm, onCancel, itemName } ) => {
     return (
-      <Modal visible={visible} animationType="slide" transparent={true}>
+      <Modal visible={visible} animationType="fade" transparent={true}>
         <View style={styles.modalWindow} >
           <View style={styles.modalContent}>
-            <Text style={styles.text}>Are you sure you want to delete this item?</Text>
+            <Text style={styles.deleteText}>Delete {itemName}?</Text>
             <View style={styles.buttonContainer}>
-              <TouchableOpacity onPress={onCancel} style={[styles.button, styles.button]}>
+              <TouchableOpacity onPress={onCancel} style={styles.deleteButton}>
                 <Text style={styles.buttonText}>No</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={onConfirm} style={[styles.button, styles.button]}>
+              <TouchableOpacity onPress={onConfirm} style={styles.deleteButton}>
                 <Text style={styles.buttonText}>Yes</Text>
               </TouchableOpacity>
             </View>
@@ -122,6 +122,7 @@ interface LostItem {
                   setConfirmVisible(false);
                 }}
                 onCancel={() => setConfirmVisible(false)}
+                itemName = {title}
               />
 
             </View>
@@ -142,6 +143,7 @@ interface LostItem {
                   setConfirmVisible(false);
                 }}
                 onCancel={() => setConfirmVisible(false)}
+                itemName = {title}
               />
               
             </View>
@@ -437,14 +439,34 @@ const styles = StyleSheet.create({
   modalContent: {
     alignSelf: 'center',
     justifyContent: 'center',
+    alignContent: 'center',
     backgroundColor: '#EFF1F8',
+    borderRadius: 10,
   },
   modalWindow: {
     alignSelf: 'center',
     height: height,
+    width: width,
     justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  }
+    backgroundColor: 'rgba(	104, 112, 137, 0.5)',
+  },
+  deleteText: {
+    color: '#000',
+    alignSelf: 'center',
+    fontSize: 14,
+    marginTop: 10,
+    marginBottom: 15,
+  },
+  deleteButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#687089',
+    padding: 5,
+    width: width * 0.38,
+    height: height * 0.04,
+    marginHorizontal: width * 0.015,
+    borderRadius: 8,
+  },
 });
 
 
