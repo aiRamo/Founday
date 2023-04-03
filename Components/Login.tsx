@@ -5,7 +5,6 @@ import { StyleSheet, TextInput, View, Dimensions, Text, Image, Alert} from 'reac
 import { Divider, Header} from '@rneui/themed';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native';
-
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 const { width, height } = Dimensions.get('window');
@@ -42,6 +41,10 @@ const Login = ({navigation}) => {
 
     
   }
+
+  const resetPassword = () => {
+    navigation.navigate('Forgot Password');
+  }
   
   const redirectToSignUp = () => {
     navigation.navigate('Sign Up');
@@ -62,6 +65,7 @@ const Login = ({navigation}) => {
 
             <TextInput value={password} onChangeText={(text) => setPassword(text)} 
                 placeholder='Password' placeholderTextColor={'#9DA2B2'} style={styles.textBoxes} secureTextEntry={true}></TextInput>
+            <Text style={styles.signUpButton} onPress={resetPassword}>Forgot Password?</Text>
 
             <TouchableOpacity onPress={loginUser} style={styles.logInButton}>
                 <View >
