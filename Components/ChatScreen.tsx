@@ -1,90 +1,75 @@
-import React, { useState, useEffect } from 'react';
-import { GiftedChat, Send } from 'react-native-gifted-chat';
-import { StyleSheet, Text, View, Image, TouchableOpacity, FlatList } from 'react-native';
-import { IconButton } from 'react-native-paper';
-import { firebase, auth, db } from './firebaseConfig'
-import { collection, addDoc, getDocs, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { firebase, auth, firestore } from './firebaseConfig';
+import { collection, addDoc, query, orderBy, onSnapshot, limit, QuerySnapshot, DocumentData } from 'firebase/firestore';
+import { useNavigation } from '@react-navigation/native';
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import { StyleSheet } from 'react-native';
+import { GiftedChat } from 'react-native-gifted-chat';
 
-const RoomScreen = ({navigation}) => {
-
- // const [messages, setMessages] = useState([]);
-   const [messages, setMessages] = useState([
-    
-    //Mock message data
-    
-    // example of system message
-    {
-      _id: 0,
-      text: 'New room created.',
-      createdAt: new Date().getTime(),
-      system: true
-    },
-    // example of chat message
-    {
-      _id: 1,
-      text: 'Henlo!',
-      createdAt: new Date().getTime(),
-      user: {
-        _id: 2,
-        name: 'Test User'
-      }
-    }
-  ]); 
-
-  // helper method that is sends a message
-   function handleSend(newMessage = []) {
-    setMessages(GiftedChat.append(messages, newMessage));
-  } 
-
-
-
-  function renderSend(props) {
-    return (
-      <Send {...props}>
-        <View style={styles.sendingContainer}>
-          <IconButton icon='send-circle' size={32}  /> 
-          {/* color='#6646ee' */}
-        </View>
-      </Send>
-    );
-  }
-
-  return (
-    <GiftedChat
-      messages={messages}
-      onSend={newMessage => handleSend(newMessage)} 
-      user={{ _id: 1 }}
-      alwaysShowSend
-      scrollToBottom
-      renderSend={renderSend}
-    />
-  );
+interface Message {
+  _id: string;
+  createdAt: any;
+  text: any;
+  user: any;
 }
 
+const RoomScreen = () => {
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  useLayoutEffect(() => {
+    const collectionRef = collection(firestore, 'messages');
+    const q = query(collectionRef, orderBy('createdAt', 'desc'));
+
+    const unsubscribe = onSnapshot(q, (snapshot: QuerySnapshot<DocumentData>) => {
+      console.log('snapshot');
+      setMessages(
+        snapshot.docs.map(doc => ({
+          _id: doc.id,
+          createdAt: doc.data().createdAt.toDate(),
+          text: doc.data().text,
+          user: doc.data().user
+        }))
+      )
+    })
+    return () => unsubscribe();
+  }, []);
+  
+
+  const onSend = useCallback((messages = []) => {
+    setMessages(previousMessages => GiftedChat.append(previousMessages, messages));
+
+    const { _id, createdAt, text, user } = messages[0];
+    addDoc(collection(firestore, 'messages'), {
+      _id,
+      createdAt,
+      text,
+      user
+    })
+      .then(() => {
+        console.log('Data uploaded successfully.');
+      })
+      .catch((error) => {
+        console.error('Error uploading data: ', error);
+        alert('Failed to upload data to Firestore.');
+        alert(error);
+      });
+  }, []);
+
+  return(
+    <GiftedChat
+      messages={messages}
+      onSend={onSend}
+      user={{
+        _id: auth.currentUser?.email
+      }}
+      messagesContainerStyle={styles.messageContainer}
+    />
+  )
+};
+
 const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
+  messageContainer: {
+    backgroundColor: '#ffffff',
   },
-  sendingContainer: {
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  bottomComponentContainer: {
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  systemMessageWrapper: {
-    backgroundColor: '#6646ee',
-    borderRadius: 4,
-    padding: 5
-  },
-  systemMessageText: {
-    fontSize: 14,
-    color: '#fff',
-    fontWeight: 'bold'
-  }
 });
 
 export default RoomScreen;

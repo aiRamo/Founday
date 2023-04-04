@@ -2,7 +2,7 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
 import 'firebase/compat/storage';
-import { initializeFirestore } from 'firebase/firestore';
+import { getFirestore, initializeFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
@@ -20,5 +20,6 @@ const firebaseConfig = {
 
   const auth = getAuth(firebase.initializeApp(firebaseConfig));
   const db = initializeFirestore(firebase.initializeApp(firebaseConfig), {experimentalForceLongPolling: true});
+  const firestore = getFirestore();
 
-  export {firebase, auth, db};
+  export {firebase, auth, db, firestore};

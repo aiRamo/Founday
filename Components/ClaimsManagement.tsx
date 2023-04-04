@@ -29,7 +29,7 @@ import { AntDesign } from '@expo/vector-icons';
                 name="pushpin" 
                 size={25} 
                 onPress={() => navigation.navigate('Chat Room')} 
-                style={{marginTop: 10, alignItems: 'flex-end'}} />
+                style={styles.pin} />
         </View>
         {/* item you lost 2*/}
         <View style={styles.container}>
@@ -47,7 +47,7 @@ import { AntDesign } from '@expo/vector-icons';
                 name="pushpin" 
                 size={25} 
                 onPress={() => navigation.navigate('Chat Room')} 
-                style={{marginTop: 10, alignItems: 'flex-end'}} />
+                style={styles.pin} />
         </View>
 
          {/* Items you Found View*/}
@@ -72,7 +72,7 @@ import { AntDesign } from '@expo/vector-icons';
                     name="pushpin" 
                     size={25} 
                     onPress={() => navigation.navigate('Chat Room')}
-                    style={{marginTop: 10, alignItems: 'flex-end'}} />
+                    style={styles.pin} />
             </View>
 
             {/* item found 2 layout*/}
@@ -91,7 +91,7 @@ import { AntDesign } from '@expo/vector-icons';
                     name="pushpin" 
                     size={25} 
                     onPress={() => navigation.navigate('Chat Room')}
-                    style={{marginTop: 10, alignItems: 'flex-end'}} />
+                    style={styles.pin} />
             </View>
 
             {/* item found 3 layout*/}
@@ -110,7 +110,7 @@ import { AntDesign } from '@expo/vector-icons';
                     name="pushpin" 
                     size={25} 
                     onPress={() => navigation.navigate('Chat Room')}
-                    style={{marginTop: 10, alignItems: 'flex-end'}} />
+                    style={styles.pin} />
             </View>
 
             {/* item found 2 layout*/}
@@ -129,7 +129,7 @@ import { AntDesign } from '@expo/vector-icons';
                     name="pushpin" 
                     size={25} 
                     onPress={() => navigation.navigate('Chat Room')}
-                    style={{marginTop: 10, alignItems: 'flex-end'}} />
+                    style={styles.pin} />
             </View>
         </ScrollView>
 
@@ -177,6 +177,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 3,
     flexGrow: 1,
   },
+  pin: {
+    marginTop: 10, 
+    alignItems: 'flex-end',
+    marginRight: 25,
+  }
 });
 
 
