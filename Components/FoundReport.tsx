@@ -74,7 +74,7 @@ const FoundUploadScreen = ({navigation}) => {
       const mapWindowStyle = width > height ? styles.mapWindowWeb : styles.mapWindowMobile;
       const mapSliderStyle = width > height ? styles.mapSliderWeb : styles.mapSliderMobile;
       const isWeb = (width > height);
-      const pinYCoord = width > height ? 80 : 40;
+      const pinYCoord = width > height ? 40 : 40;
     
       return (
         <Modal visible={visible} animationType="fade" transparent={true}>
@@ -361,7 +361,7 @@ const FoundUploadScreen = ({navigation}) => {
               />
             </View>
 
-            <TouchableOpacity style = {styles.dateButton} onPress={ () => setConfirmVisible(true)}>
+            <TouchableOpacity style = {styles.locationButton} onPress={ () => setConfirmVisible(true)}>
               <Text style={styles.buttonText}>
                 {location}
               </Text>
@@ -475,6 +475,16 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
         marginVertical: 10,
     },
+    locationButton: {
+      borderRadius: 8,
+      width: 150,
+      height: 50,
+      backgroundColor: '#687089',
+      alignItems:'center',
+      justifyContent:'center',
+      marginVertical: 10,
+      marginHorizontal: 15,
+    },
     mapWindowMobile: {
       width: width * 2,
       height: (width / 1.19) * 2, //1.19 is image height compared to width.
@@ -491,7 +501,6 @@ const styles = StyleSheet.create({
       height: '100%',
       alignSelf: 'center',
       backgroundColor: '#000',
-      marginTop: 40,
     },
     modalWindow: {
       alignSelf: 'center',
@@ -509,7 +518,7 @@ const styles = StyleSheet.create({
       alignItems:'center',
       justifyContent:'center',
       alignSelf: 'center',
-      marginBottom: 40,
+      marginVertical: 20,
       marginHorizontal: 5,
     },
     pinImage: {
@@ -523,6 +532,7 @@ const styles = StyleSheet.create({
     mapSliderWeb: {
       height: '100%',
       width: '100%',
+      marginTop: 25,
     },
     confirmButtonWindow: {
       backgroundColor: 'rgba(	0, 0, 0, 0.8)'
