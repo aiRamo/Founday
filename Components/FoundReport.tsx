@@ -361,6 +361,7 @@ const FoundUploadScreen = ({navigation}) => {
               />
             </View>
 
+            <Text style={{marginTop: 5, marginLeft: 5,}}>Location:</Text>
             <TouchableOpacity style = {styles.locationButton} onPress={ () => setConfirmVisible(true)}>
               <Text style={styles.buttonText}>
                 {location}
@@ -372,7 +373,7 @@ const FoundUploadScreen = ({navigation}) => {
                 onCancel={(location) => { setSelectedLocation(location); handleConfirmLocation(); setConfirmVisible(false);}}
             />
 
-            <View style={{height: 1, width: width, backgroundColor: 'gray', marginVertical: height * 0.07}}/>
+            <View style={{height: 1, width: width, backgroundColor: 'gray', marginVertical: height * 0.04}}/>
 
             <View>
                 <TouchableOpacity style={styles.uploadButton} onPress={uploadItem}>
@@ -461,18 +462,18 @@ const styles = StyleSheet.create({
       justifyContent: "flex-start"
     },
     dateHandler: {
-      justifyContent: "flex-start",
+      justifyContent: 'space-between',
+      alignContent: 'flex-start',
       flexDirection: 'row',
-      alignSelf: 'center',
     },
     dateButton: {
-      borderRadius: 3,
+      borderRadius: 8,
         width: 150,
         height: 50,
         backgroundColor: '#687089',
         alignItems:'center',
         justifyContent:'center',
-        marginHorizontal: 5,
+        marginLeft: 15,
         marginVertical: 10,
     },
     locationButton: {
