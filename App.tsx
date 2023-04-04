@@ -8,6 +8,7 @@ import Login from './Components/Login';
 import Settings from './Components/Settings';
 import FoundUploadScreen from './Components/FoundReport';
 import SignUp from './Components/SignUp';
+import ForgotPassword from './Components/ForgotPassword';
 import ClaimsManagement from './Components/ClaimsManagement';
 import MatchingResults from './Components/MatchingResults';
 import PrivateMessage from './Components/PrivateMessage';
@@ -89,6 +90,7 @@ const App = () => {
       <Stack.Screen name="Lost Report" component={LostUploadScreen} options={{title: 'Lost Item Report'}}/>
       <Stack.Screen name="Found Report" component={FoundUploadScreen} options={{title: 'Found Item Report'}}/>
       <Stack.Screen name="Sign Up" component={SignUp} options={{headerShown: false}}/>
+      <Stack.Screen name="Forgot Password" component={ForgotPassword} options={{title: 'Reset Password'}}/>
       <Stack.Screen name="User Settings" component={Settings} options={{title: 'Settings'}}/>
       <Stack.Screen name="Claims" component={ClaimsManagement} options={{title: 'Open Claims'}}/>
       <Stack.Screen name="Matches" component={MatchingResults} options={{title: 'Possible Matching Items'}}/>
