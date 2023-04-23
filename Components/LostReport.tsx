@@ -133,7 +133,7 @@ const LostUploadScreen = ({navigation}) => {
         return;
       }
 
-      
+      console.log("Date:" + date);
       // For processing correct Date format..
 
       const selectedMonth = new Date(date).getMonth();
@@ -201,7 +201,7 @@ const LostUploadScreen = ({navigation}) => {
                 itemName: title,
                 category: category,
                 description: description,
-                date: date,
+                date: dateLabel,
                 location: location,
                 author: uid,
                 image: image ? image?.uri.substring(image.uri.lastIndexOf('/')+1) : 'N/A'

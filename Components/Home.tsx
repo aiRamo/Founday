@@ -63,7 +63,7 @@ const Item = ({title, description, image, button, onPress, imageCategory}: any) 
     }
   }, [image]);
 
-  //TODO: deleteItem() will delete the the firebase database entity, as well as the storage image.
+  //deleteItem() deletes the firebase database entity, as well as the storage image.
 
   const deleteItem = () => {
     items.once('value', (snapshot) => {
@@ -286,34 +286,7 @@ const Home = ({navigation}: any) => {
               imageCategory: "UserFoundPhotos",
             };
             // Use a switch statement to set the image based on the category of the lost item
-            if (childData.image == 'N/A'){
-              switch (childData.category) {
-                case 'Apparel':
-                  item.image = require('../assets/default-apparel.png');
-                  break;
-                case 'Electronics':
-                  item.image = require('../assets/default-electronics.png');
-                  break;
-                case 'Traversals':
-                  item.image = require('../assets/default-traversals.png');
-                  break;
-                case 'Bags':
-                  item.image = require('../assets/default-bags.png');
-                  break;
-                case 'ID':
-                  item.image = require('../assets/default-ID.png');
-                  break;
-                case 'Keys':
-                  item.image = require('../assets/default-keys.png');
-                  break;
-                default:
-                  alert(childData.category);
-                  item.image = require('../assets/defaultProfile.png');
-                  break;
-              }
-            } else { //This is where I will DECODE the base64 image in the database and use it for item.image
-              item.image = childData.image;
-            }
+            item.image = childData.image;
             items.push(item);
           }
         });
