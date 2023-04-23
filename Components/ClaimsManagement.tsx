@@ -29,7 +29,7 @@ import { AntDesign } from '@expo/vector-icons';
                 name="pushpin" 
                 size={25} 
                 onPress={() => navigation.navigate('Chat Room')} 
-                style={styles.pin} />
+                style={styles.pin} /> 
         </View>
         {/* item you lost 2*/}
         <View style={styles.container}>
