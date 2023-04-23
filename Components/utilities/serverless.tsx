@@ -1,4 +1,3 @@
-import MatchingResults from '../MatchingResults';
 import {firebase} from '../firebaseConfig';
 import 'firebase/database';
 
@@ -48,7 +47,7 @@ export async function getMatchingFoundItems(lostItems: any): Promise<{ [key: str
         const hypotenuse = Math.sqrt(Math.pow(foundX - lostX, 2) + Math.pow(foundY - lostY, 2));
         console.log(`Distance between lost item ${lostItem.title} and found item ${foundItem.itemName} = ${hypotenuse}`);
   
-        if (hypotenuse <= 0.04) {
+        if (hypotenuse <= 0.05) {
           console.log(`Found item ${foundItem.itemName} is a strong match for lost item ${lostItem.itemName}`);
           matchingItems.push(foundItem);
           console.log(JSON.stringify(matchingItems));
