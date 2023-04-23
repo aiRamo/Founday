@@ -8,7 +8,7 @@ import { getAuth, } from 'firebase/auth';
 const { width, height } = Dimensions.get('window');
 const auth = getAuth();
 
-const ForgotPassword = ({navigation}) => {
+const ForgotPassword = ({navigation}: any) => {
     const [email, setEmail] = useState('');
     
     const sendEmail = async () => {
@@ -19,7 +19,7 @@ const ForgotPassword = ({navigation}) => {
 
           try {
             firebase.auth().sendPasswordResetEmail(email)
-            console.log('Password reset email sent successfully')
+            alert('Password reset email sent successfully')
             navigation.navigate('Login')
           } catch (error) {
             alert(error)

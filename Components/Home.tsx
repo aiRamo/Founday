@@ -2,28 +2,34 @@ import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, FlatList, ImageBackground, Dimensions, ScrollView, Alert, Image, Modal} from 'react-native';
 import Card from './utilities/homepageCard';
 import { firebase } from './firebaseConfig';
-import {get ,ref, onValue} from 'firebase/database';
-import { getDownloadURL } from 'firebase/storage';
+import {ref, onValue} from 'firebase/database';
+import { getMatchingFoundItems } from './utilities/serverless';
 
 const db = firebase.database()
-
+export let matchResults: any; // This is what we will use to store the matchResults (for the time being)
 
 interface LostItem {
+  author: string;
   title: string;
   description: string;
   image: any;
   button: boolean;
   imageCategory: string;
 }
+
+interface MatchingResult {
+  matchingItems: any;
+  weakMatches: any;
+}
   
   const { width, height } = Dimensions.get('window');
 
-  const ConfirmDeleteModal = ({ visible, onConfirm, onCancel, itemName } ) => {
+  const ConfirmDeleteModal = ({ visible, onConfirm, onCancel, itemName }: any ) => {
     return (
       <Modal visible={visible} animationType="fade" transparent={true}>
         <View style={styles.modalWindow} >
           <View style={styles.modalContent}>
-            <Text style={styles.deleteText}>Delete {itemName}?</Text>
+            <Text style={styles.deleteText}>Delete report: {itemName}?</Text>
             <View style={styles.buttonContainer}>
               <TouchableOpacity onPress={onCancel} style={styles.deleteButton}>
                 <Text style={styles.buttonText}>No</Text>
@@ -39,11 +45,11 @@ interface LostItem {
   };
 
   
-  const Item = ({title, description, image, button, onPress, imageCategory}) => {
+  const Item = ({title, description, image, button, onPress, imageCategory}: any) => {
 
     const user = firebase.auth().currentUser;
     const uid = user?.uid;
-    const [imageUrl, setImageUrl] = useState(null);
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
     const storageRef = firebase.storage().ref(`${imageCategory}/${uid}/${image}`);
     const items = db.ref(`${imageCategory === 'UserLostPhotos' ? 'LostItems' : 'FoundItems'}`)
     const [confirmVisible, setConfirmVisible] = useState(false);
@@ -156,11 +162,40 @@ interface LostItem {
     );
   };
 
- const Home = ({navigation}) => {
-    const [count, setCount] = useState(0);
+ const Home = ({navigation}: any) => {
+    const [matchCount, setMatchCount] = useState(0);
     const [lostItems, setLostItems] = useState<LostItem[]>([]);
     const [FoundItems, setFoundItems] = useState<LostItem[]>([]);
-    
+    const [results, setResults] = useState<{ [key: string]: MatchingResult }>({});
+
+    useEffect(() => {
+      const handleGetMatchingItems = async () => {
+        const matchingResults = await getMatchingFoundItems(lostItems);
+        setResults(matchingResults);
+      }
+
+      handleGetMatchingItems();
+    }, [lostItems, FoundItems]);
+
+    useEffect(() => {
+      matchResults = results;
+      setMatchCount(0);
+      let count = 0;
+      for (const [key, value] of Object.entries(results)) {
+        const { matchingItems, weakMatches } = value;
+        if (matchingItems.length || weakMatches.length) {
+          count += matchingItems.length + weakMatches.length;
+          console.log(`Found matches in "${key}" item:`, value);
+        } else {
+          console.log(`No matches found for "${key}" item`);
+        }
+      }
+      setMatchCount(prevCount => prevCount + count);
+    }, [results]);
+
+    useEffect(() => {
+      console.log(`New match count:`, matchCount);
+    }, [matchCount]);
 
     useEffect(() => {
       //get the user reference using firebase.auth()
@@ -177,14 +212,17 @@ interface LostItem {
         const foundItemsRef = ref(db, foundPath);
 
 
-        onValue(lostItemsRef, (snapshot) => {
+        onValue(lostItemsRef, async (snapshot) => {
           const items = [];
           snapshot.forEach((childSnapshot) => {
             const childData = childSnapshot.val();
             if (childData.author === uid) {
               const item = {
+                author: childData.author,
                 title: childData.itemName,
                 description: childData.description,
+                category: childData.category,
+                location: childData.location,
                 image: null,
                 button: false,
                 imageCategory: "UserLostPhotos",
@@ -204,7 +242,7 @@ interface LostItem {
                   case 'Bags':
                     item.image = require('../assets/default-bags.png');
                     break;
-                  case 'ID':
+                  case 'ID/Documents':
                     item.image = require('../assets/default-ID.png');
                     break;
                   case 'Keys':
@@ -222,13 +260,14 @@ interface LostItem {
             }
           });
           items.push({
+            author: 'N/A',
             title: 'Create New Lost Item',
             description: 'Have a new item? Create here:',
             image: require('../assets/report-addition.png'),
             imageCategory: "UserLostPhotos",
             button: true,
           });
-          setLostItems(items);
+          setLostItems(items)
         });
 
         onValue(foundItemsRef, (snapshot) => {
@@ -237,9 +276,12 @@ interface LostItem {
             const childData = childSnapshot.val();
             if (childData.author === uid) {
               const item = {
+                author: childData.author,
                 title: childData.itemName,
                 description: childData.description,
+                location: childData.location,
                 image: null,
+                category: childData.category,
                 button: false,
                 imageCategory: "UserFoundPhotos",
               };
@@ -265,7 +307,7 @@ interface LostItem {
                     item.image = require('../assets/default-keys.png');
                     break;
                   default:
-                    Alert.alert(childData.category);
+                    alert(childData.category);
                     item.image = require('../assets/defaultProfile.png');
                     break;
                 }
@@ -276,6 +318,7 @@ interface LostItem {
             }
           });
           items.push({
+            author: 'N/A',
             title: 'Create New Found Item',
             description: 'Have a new item? Create here:',
             image: require('../assets/report-addition.png'),
@@ -290,9 +333,21 @@ interface LostItem {
     }, []);
     
     
+  useEffect(() => {
+    if (lostItems.length > 0) {
+      getMatchingFoundItems(lostItems)
+        .then((results) => {
+          console.log(results.matchingItems);
+          console.log(results.weakMatches);
+        })
+        .catch((error) => {
+          alert(error);
+        });
+    }
+  }, [lostItems]);
+
     const goToMatchResults = () => {
       // going to matches screen functionality
-      setCount(prevCount => prevCount + 1);
       navigation.navigate('Matches');
     }
     
@@ -313,6 +368,11 @@ interface LostItem {
             <View>
                 <TouchableOpacity style={styles.button} onPress={goToMatchResults}>
                     <Text style={styles.buttonText}>Matches</Text>
+                    {matchCount > 0 && (
+                      <View style = {styles.countCircle}>
+                        <Text style = {styles.countCircleText}>{matchCount}</Text>
+                      </View>
+                    )}
                 </TouchableOpacity>
             </View>
         </View>
@@ -466,6 +526,22 @@ const styles = StyleSheet.create({
     height: height * 0.04,
     marginHorizontal: width * 0.015,
     borderRadius: 8,
+  },
+  countCircle: {
+    backgroundColor: 'red',
+    borderRadius: 50,
+    position: 'absolute',
+    top: -10,
+    right: -10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  countCircleText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 12,
   },
 });
 

@@ -10,7 +10,7 @@ import { AntDesign } from '@expo/vector-icons';
   }
 
   return (
-    <View >
+    <View style= {{backgroundColor: '#EFF1F8'}} >
          {/* Items you lost View*/}
         <Text style={{fontSize: 20, marginTop: 15, marginLeft: 8,}}>Items you lost</Text>
         <View style={{borderWidth: 0.5, borderColor: 'black', margin: 10}}/>

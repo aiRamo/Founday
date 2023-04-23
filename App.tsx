@@ -74,7 +74,7 @@ const App = () => {
           ),
           headerLeft: () => { // Profile Icon loaded here!
             return (
-              <View style={styles.profile}>
+              /*<View style={styles.profile}>
                 <Image
                   source={require('./assets/defaultProfile.png')}
                   style={styles.profileIcon}
@@ -82,7 +82,8 @@ const App = () => {
                 <Text style = {styles.profileText}>
                   {displayName}
                 </Text>
-            </View>
+            </View>*/
+            true
             );
           }
         })}
