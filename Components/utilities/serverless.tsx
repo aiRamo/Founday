@@ -2,6 +2,7 @@ import MatchingResults from '../MatchingResults';
 import {firebase} from '../firebaseConfig';
 import 'firebase/database';
 
+
 const db = firebase.database();
   
 interface MatchingResult {
@@ -19,7 +20,12 @@ export async function getMatchingFoundItems(lostItems: any): Promise<{ [key: str
   console.log(`Found ${Object.values(foundItems).length} items in database`);
   
   console.log('Matching lost items with found items...');
+
   for (const lostItem of lostItems) {
+    if (lostItem.title == "Create New Lost Item") {
+      continue;
+    }
+
     console.log(`Matching lost item ${lostItem.title} with found items...`);
     
     const matchingItems: any = [];
