@@ -175,7 +175,7 @@ interface MatchingResult {
       }
 
       handleGetMatchingItems();
-    }, [lostItems, FoundItems]);
+    }, [lostItems]);
 
     useEffect(() => {
       matchResults = results;
@@ -331,20 +331,6 @@ interface MatchingResult {
         console.log("User is not logged in");
       }
     }, []);
-    
-    
-  useEffect(() => {
-    if (lostItems.length > 0) {
-      getMatchingFoundItems(lostItems)
-        .then((results) => {
-          console.log(results.matchingItems);
-          console.log(results.weakMatches);
-        })
-        .catch((error) => {
-          alert(error);
-        });
-    }
-  }, [lostItems]);
 
     const goToMatchResults = () => {
       // going to matches screen functionality
