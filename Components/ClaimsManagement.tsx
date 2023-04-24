@@ -1,137 +1,74 @@
-import React, {useState} from 'react';
-import { StyleSheet, Text, View, Image, Button, TouchableOpacity, ScrollView } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
+import { firebase, auth, firestore } from './firebaseConfig';
 
- const ClaimsManagement = ({navigation}) => {
-  const goToPrivateMessage = () => {
-    //go to chat
-    //alert('go to chat')
-    navigation.navigate('Private Message');
+ const ClaimsManagement = ({navigation}: any) => {
+  const [users, setUsers] = useState<any[]>([]);
+  const currentUserUid = auth.currentUser?.uid;
+
+  useEffect(() => {
+    // This useEffect() is used retrieve EACH user from the realtime database users directory. It then stores these users in the users state.
+    const usersRef = firebase.database().ref('users');
+    usersRef.on('value', (snapshot) => {
+      const usersData = snapshot.val();
+      if (usersData) {
+        // Convert the object of users into an array of users
+        const usersArray = Object.keys(usersData).map((userId) => ({
+          id: userId,
+          ...usersData[userId],
+        }));
+        // Update the state with the array of users
+        setUsers(usersArray);
+      }
+    });
+  }, []);
+
+  const handleChatEnter = (recipientUser: any) => {
+    navigation.navigate('Chat Room', {recipientUser}); // recipientUser is sent with the chat screen.tsx to implement 1 to 1 functionality. 
   }
 
   return (
     <View style= {{backgroundColor: '#EFF1F8'}} >
+      <ScrollView style={styles.scrollView}>
          {/* Items you lost View*/}
         <Text style={{fontSize: 20, marginTop: 15, marginLeft: 8,}}>Items you lost</Text>
         <View style={{borderWidth: 0.5, borderColor: 'black', margin: 10}}/>
-        <View style={styles.container}>
-            <Image source={{uri: 'https://randomuser.me/api/portraits/men/1.jpg'}} style={styles.img}/>
+        {users        // **** This .map() is used to cycle through every user and generate a chat card by default.
+                      //1.  We will need to create a way to check if the chat belongs in lost or found, AND to check if it has any contents at all.
+                      //2.  ALSO IN HERE, when the cards are generated, we need to PULL the correct firestore data for that specific chat and DISPLAY the most recent message.
+                      //3.  I guess while we are at it, lets fix that date section in the card to also pull the date data from the firestore object.
+        .filter((user) => user.id !== currentUserUid)
+        .map((user) => (
+        <View key={user.email} style={styles.container}>
+          <Image source={{ uri: 'https://randomuser.me/api/portraits/men/1.jpg' }} style={styles.img} />
 
-            {/* inner texts view*/}
-            <View style={styles.innerContainer}>
-                <Text style={{fontSize: 15, color: 'black', fontWeight: 'bold',}}>UserName replied to you</Text>
-                <Text style={{fontSize: 12, color: 'gray', marginTop: 3,}}>Date here</Text>
-                <Text style={{fontSize: 15, color: 'gray', marginTop: 8,}}>chats...</Text>
-            </View>
+          {/* inner texts view*/}
+          <View style={styles.innerContainer}>
+            <Text style={{ fontSize: 15, color: 'black', fontWeight: 'bold' }}>
+              {user.firstName} replied to you
+            </Text>
+            <Text style={{ fontSize: 12, color: 'gray', marginTop: 3 }}>Date here</Text>
+            <Text style={{ fontSize: 15, color: 'gray', marginTop: 8 }}>chats...</Text>
+          </View>
 
-            {/* pin icon*/}
-            <AntDesign 
-                name="pushpin" 
-                size={25} 
-                onPress={() => navigation.navigate('Chat Room')} 
-                style={styles.pin} /> 
+          {/* pin icon*/}
+          <AntDesign
+            name="pushpin"
+            size={25}
+            onPress={() => handleChatEnter(user.id)}
+            style={styles.pin}
+          />
         </View>
-        {/* item you lost 2*/}
-        <View style={styles.container}>
-            <Image source={{uri: 'https://randomuser.me/api/portraits/men/1.jpg'}} style={styles.img}/>
-
-            {/* inner texts view*/}
-            <View style={styles.innerContainer}>
-                <Text style={{fontSize: 15, color: 'black', fontWeight: 'bold',}}>UserName replied to you</Text>
-                <Text style={{fontSize: 12, color: 'gray', marginTop: 3,}}>Sunday at 11:50AM</Text>
-                <Text style={{fontSize: 15, color: 'gray', marginTop: 8,}}>chats...</Text>
-            </View>
-
-            {/* pin icon*/}
-            <AntDesign 
-                name="pushpin" 
-                size={25} 
-                onPress={() => navigation.navigate('Chat Room')} 
-                style={styles.pin} />
-        </View>
+        ))}
 
          {/* Items you Found View*/}
-        <Text style={{fontSize: 20, marginTop: 150, marginLeft: 8, }}>Items you found</Text>
+        <Text style={{fontSize: 20, marginTop: 50, marginLeft: 8, }}>Items you found</Text>
         {/* horizontal line*/}
         <View style={{borderWidth: 0.5, borderColor: 'black', margin: 10}}/>  
 
-        <ScrollView style={styles.scrollView}>
-            {/* each item found layout*/}
-            <View style={styles.container}>
-                <Image source={{uri: 'https://randomuser.me/api/portraits/men/1.jpg'}} style={styles.img}/>
-
-                {/* inner texts view*/}
-                <View style={styles.innerContainer}>
-                    <Text style={{fontSize: 15, color: 'black', fontWeight: 'bold',}}>Augusta Abbott replied to you</Text>
-                    <Text style={{fontSize: 12, color: 'gray', marginTop: 3,}}>Date here</Text>
-                    <Text style={{fontSize: 15, color: 'gray', marginTop: 8,}}>chats...</Text>
-                </View>
-
-                {/* pin icon*/}
-                <AntDesign 
-                    name="pushpin" 
-                    size={25} 
-                    onPress={() => navigation.navigate('Chat Room')}
-                    style={styles.pin} />
-            </View>
-
-            {/* item found 2 layout*/}
-            <View style={styles.container}>
-                <Image source={{uri: 'https://randomuser.me/api/portraits/men/1.jpg'}} style={styles.img}/>
-
-                {/* inner texts view*/}
-                <View style={styles.innerContainer}>
-                    <Text style={{fontSize: 15, color: 'black', fontWeight: 'bold',}}>Oliver replied to you</Text>
-                    <Text style={{fontSize: 12, color: 'gray', marginTop: 3,}}>Monday at 2:45PM</Text>
-                    <Text style={{fontSize: 15, color: 'gray', marginTop: 8,}}>Regarding Found Item 1..</Text>
-                </View>
-
-                {/* pin icon*/}
-                <AntDesign 
-                    name="pushpin" 
-                    size={25} 
-                    onPress={() => navigation.navigate('Chat Room')}
-                    style={styles.pin} />
-            </View>
-
-            {/* item found 3 layout*/}
-            <View style={styles.container}>
-                <Image source={{uri: 'https://randomuser.me/api/portraits/men/1.jpg'}} style={styles.img}/>
-
-                {/* inner texts view*/}
-                <View style={styles.innerContainer}>
-                    <Text style={{fontSize: 15, color: 'black', fontWeight: 'bold',}}>Oliver replied to you</Text>
-                    <Text style={{fontSize: 12, color: 'gray', marginTop: 3,}}>Monday at 2:45PM</Text>
-                    <Text style={{fontSize: 15, color: 'gray', marginTop: 8,}}>Regarding Found Item 2..</Text>
-                </View>
-
-                {/* pin icon*/}
-                <AntDesign 
-                    name="pushpin" 
-                    size={25} 
-                    onPress={() => navigation.navigate('Chat Room')}
-                    style={styles.pin} />
-            </View>
-
-            {/* item found 2 layout*/}
-            <View style={styles.container}>
-                <Image source={{uri: 'https://randomuser.me/api/portraits/men/1.jpg'}} style={styles.img}/>
-
-                {/* inner texts view*/}
-                <View style={styles.innerContainer}>
-                    <Text style={{fontSize: 15, color: 'black', fontWeight: 'bold',}}>Oliver replied to you</Text>
-                    <Text style={{fontSize: 12, color: 'gray', marginTop: 3,}}>Monday at 2:45PM</Text>
-                    <Text style={{fontSize: 15, color: 'gray', marginTop: 8,}}>Regarding Found Item 3..</Text>
-                </View>
-
-                {/* pin icon*/}
-                <AntDesign 
-                    name="pushpin" 
-                    size={25} 
-                    onPress={() => navigation.navigate('Chat Room')}
-                    style={styles.pin} />
-            </View>
-        </ScrollView>
+        
+      </ScrollView>
 
     </View>
 
@@ -175,6 +112,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     marginHorizontal: 3,
+    height: '100%',
     flexGrow: 1,
   },
   pin: {
