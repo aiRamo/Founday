@@ -11,7 +11,6 @@ interface Message {
   text: any;
   user: any;
 }
-//kduxEm2sChe9wDd7OWVyA1k4cWE3
 const RoomScreen = ({ navigation, route }: { navigation: any, route: any }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const { recipientUser } = route.params;
