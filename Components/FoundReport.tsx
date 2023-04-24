@@ -199,7 +199,7 @@ const FoundUploadScreen = ({navigation}) => {
                 itemName: title,
                 category: category,
                 description: description,
-                date: date,
+                date: dateLabel,
                 location: location,
                 author: uid,
                 image: image ? image?.uri.substring(image.uri.lastIndexOf('/')+1) : 'N/A'

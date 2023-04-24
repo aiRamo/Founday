@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 import { Card, Button, Avatar } from 'react-native-paper';
 import { AntDesign } from '@expo/vector-icons';
+import { matchResults } from './Home'; // This is the Object Array that will be used to render/connect the matching item cards.
 
 
 /* const LeftContent = props => <Avatar.Icon {...props} icon="folder" /> */
@@ -9,7 +10,13 @@ import { AntDesign } from '@expo/vector-icons';
 const LeftContent = props => <Image source={{uri: 'https://randomuser.me/api/portraits/men/1.jpg'}} style={styles.img}/>
 const RightContent = props => <AntDesign name="ellipsis1" size={25} onPress={() => {}} style={{marginTop: 4, marginRight: 5, alignItems: 'flex-end'}} />
 
- const MatchingResults = ({navigation}) => {
+
+
+const MatchingResults = ({navigation}: any) => {
+
+  useEffect(() => {
+    console.log(matchResults);
+  }, [matchResults]);
 
   return (
 
