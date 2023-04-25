@@ -2,7 +2,7 @@ import { firebase, auth, firestore } from './firebaseConfig';
 import { collection, addDoc, query, orderBy, onSnapshot, limit, QuerySnapshot, DocumentData } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
 import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
-import { StyleSheet, Alert } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
 
 interface Message {
@@ -13,13 +13,13 @@ interface Message {
 }
 const RoomScreen = ({ navigation, route }: { navigation: any, route: any }) => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const { recipientUser } = route.params;
+  const { recipientUser, firstMessage } = route.params;
   const currentUserId = auth.currentUser?.uid;
   const recipientId = recipientUser; // This controls the chat that is being viewed.
 
   const chatRoom = `chats/${currentUserId ? (currentUserId < recipientId ? currentUserId : recipientId) : ''}_${currentUserId ? (currentUserId > recipientId ? currentUserId : recipientId) : ''}/messages`;
 
-
+  console.log("FIRST MESSAGE: " + firstMessage)
 
   useLayoutEffect(() => {
     const collectionRef = collection(firestore, chatRoom);
@@ -36,6 +36,19 @@ const RoomScreen = ({ navigation, route }: { navigation: any, route: any }) => {
         }))
       )
     })
+
+    if (firstMessage) {
+      const newMessage = [{      
+        _id: Date.now().toString(),      
+        text: firstMessage,      
+        createdAt: new Date(),      
+        user: {        
+          _id: auth.currentUser?.email ?? '',        
+          name: auth.currentUser?.displayName ?? ''      
+        }    
+      }];
+      onSend(newMessage);
+    }
     return () => unsubscribe();
   }, []);
   
@@ -61,14 +74,19 @@ const RoomScreen = ({ navigation, route }: { navigation: any, route: any }) => {
   }, []);
 
   return(
-    <GiftedChat
-      messages={messages}
-      onSend={onSend}
-      user={{
-        _id: auth.currentUser?.email ?? ''
-      }}
-      messagesContainerStyle={styles.messageContainer}
-    />
+    <View style= {{backgroundColor: '#ffffff', height: '100%'}}>
+      <View style={{ flex: 1, marginBottom: 35}}>
+        <GiftedChat
+          messages={messages}
+          onSend={onSend}
+          user={{
+            _id: auth.currentUser?.email ?? ''
+          }}
+          messagesContainerStyle={styles.messageContainer}
+        />
+      </View>
+    </View>
+    
   )
 };
 
