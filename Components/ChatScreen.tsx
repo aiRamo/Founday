@@ -13,11 +13,10 @@ interface Message {
 }
 const RoomScreen = ({ navigation, route }: { navigation: any, route: any }) => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const { recipientUser } = route.params;
+  const { chatRoomID } = route.params;
   const currentUserId = auth.currentUser?.uid;
-  const recipientId = recipientUser; // This controls the chat that is being viewed.
 
-  const chatRoom = `chats/${currentUserId ? (currentUserId < recipientId ? currentUserId : recipientId) : ''}_${currentUserId ? (currentUserId > recipientId ? currentUserId : recipientId) : ''}/messages`;
+  const chatRoom = `chats/${chatRoomID}/messages`;
 
 
 
@@ -58,6 +57,11 @@ const RoomScreen = ({ navigation, route }: { navigation: any, route: any }) => {
         alert('Failed to upload data to Firestore.');
         alert(error);
       });
+
+      var date = new Date();
+      firebase.database().ref('ChatRooms/' + chatRoomID)
+      .child("Time")
+      .set(date.getFullYear() + "/" + ("0" + (date.getMonth() + 1)).slice(-2) + "/" + ("0" + date.getDate()).slice(-2) + " " + ("0" + date.getHours() ).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2) + ":" + ("0" + date.getSeconds()).slice(-2));
   }, []);
 
   return(

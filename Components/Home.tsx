@@ -321,7 +321,7 @@ const Home = ({navigation}: any) => {
         <View style={styles.buttonContainer}>
             <View>
                 <TouchableOpacity style={styles.button} onPress={goToOpenClaims} >
-                    <Text style={styles.buttonText}>Open Claims</Text>
+                    <Text style={styles.buttonText}>Chats</Text>
                 </TouchableOpacity>
             </View>
             <View>
