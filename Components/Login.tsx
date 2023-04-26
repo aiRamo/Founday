@@ -11,7 +11,7 @@ const { width, height } = Dimensions.get('window');
 export const db = firebase.database();
 const auth = getAuth();
 
-const Login = ({navigation}) => {
+const Login = ({navigation}: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
   },
   textBoxes: {
       width: width * 0.9,
+      maxWidth: 700,
       fontSize: 18,
       padding: 12,
       borderColor: 'gray',
