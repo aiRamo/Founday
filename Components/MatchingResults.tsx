@@ -169,7 +169,7 @@ const MatchingResults = ({navigation}: any) => {
   return (
 
   <View style={styles.container}>
-    <ScrollView style={{marginTop: 1, marginHorizontal: 5, backgroundColor: '#EFF1F8', flexGrow: 1, width: 400}}>
+    <ScrollView style={{marginTop: 1, marginHorizontal: 5, backgroundColor: '#EFF1F8', flexGrow: 1, width: width}}>
       {[...strongMatches, ...weakMatches]
         .sort((a, b) => (a.isStrong ? -1 : 1))
         .map((item, index) => (
@@ -256,6 +256,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#EFF1F8',
     marginTop: 5,
     height: height,
+    width: width,
+    alignItems: 'center',
   },
   innerContainer: {
     flexDirection: 'row',
