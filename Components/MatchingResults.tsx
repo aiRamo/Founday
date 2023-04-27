@@ -1,15 +1,17 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useLayoutEffect} from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, Dimensions, Modal, TextInput, Alert } from 'react-native';
 import { Card, Button, Avatar } from 'react-native-paper';
 import { AntDesign } from '@expo/vector-icons';
 import { matchResults } from './Home'; // This is the Object Array that will be used to render/connect the matching item cards.
 import { firebase } from './firebaseConfig';
 import { CommonActions } from '@react-navigation/native';
+import { he } from 'react-native-paper-dates';
 
 
 /* const LeftContent = props => <Avatar.Icon {...props} icon="folder" /> */
 {/* right and left elements to pass to the cards*/}
 const { width, height } = Dimensions.get('window');
+
 
 interface FoundItem {
   matchedWith: any;
@@ -25,6 +27,12 @@ interface FoundItem {
   isStrong: boolean;
 }
 
+interface chatInfo {
+  finder: string;
+  loser: string;
+  item: string;
+}
+
 const MatchingResults = ({navigation}: any) => {
 
   const [strongMatches, setStrongMatches] = useState<FoundItem[]>([]);
@@ -32,10 +40,18 @@ const MatchingResults = ({navigation}: any) => {
   const [showModal, setShowModal] = useState(false);
   const [firstMessage, setFirstMessage] = useState('');
   const [recipientUser, setRecipientUser] = useState<any>();
+  const [chatObject, setChatObject] = useState<chatInfo>();
+  const [currentUserName, setCurrentUserName] = useState<string>();
 
   const getAuthorName = async (authorId: any) => {
+    const Fuser = firebase.auth().currentUser;
+    const uid = Fuser?.uid;
+    console.log('UID: ' + uid);
     const snapshot = await firebase.database().ref(`users/${authorId}`).once('value');
     const author = snapshot.val();
+    const userSnapshot = await firebase.database().ref(`users/${uid}`).once('value');
+    const user = userSnapshot.val();
+    setCurrentUserName(user.firstName);
     return author.firstName; // assuming the author object has a 'name' property
   };
 
@@ -57,7 +73,6 @@ const MatchingResults = ({navigation}: any) => {
         return require('../assets/defaultProfile.png');
     } 
   }
-
   useEffect(() => {
     const strongItems: FoundItem[] = [];
     const weakItems: FoundItem[] = [];
@@ -75,7 +90,7 @@ const MatchingResults = ({navigation}: any) => {
           const authorName = await getAuthorName(authorId);
           const imageUrl = await retrieveImageUrl(authorId, matchingItems[i].image);
           const categoryImage = await getCategoryImage(matchingItems[i].category)
-          console.log(categoryImage);
+          console.log(matchingItems[i]);
           const item: FoundItem = {
             matchedWith: key,
             date: matchingItems[i].date,
@@ -98,7 +113,7 @@ const MatchingResults = ({navigation}: any) => {
           const authorName = await getAuthorName(authorId);
           const imageUrl = await retrieveImageUrl(authorId, weakMatches[i].image);
           const categoryImage = await getCategoryImage(weakMatches[i].category)
-          console.log(categoryImage);
+          console.log(weakMatches[i]);
           const item: FoundItem = {
             matchedWith: key,
             date: weakMatches[i].date,
@@ -126,8 +141,14 @@ const MatchingResults = ({navigation}: any) => {
   useEffect(() => {
   }, [strongMatches, weakMatches]);
 
-  const handleChatEnter = (recipientUser: any) => {
+  const handleChatEnter = (recipientUser: any, Finder: string, Loser: any, Item: string) => {
+    console.log("THIS IS THE CURRENT USER: " + Loser);
     setRecipientUser(recipientUser);
+    setChatObject({
+      finder: Finder,
+      loser: Loser,
+      item: Item
+    });
     setShowModal(true);
   }
 
@@ -169,7 +190,7 @@ const MatchingResults = ({navigation}: any) => {
               <Text style={{ fontWeight: 'bold', marginVertical: 10 }}>{item.itemName} - Matches with {item.matchedWith}</Text>
               <Text style={{ marginVertical: 5 }}>{item.description}</Text>
             </Card.Content>
-            <TouchableOpacity style={styles.contactButton} onPress={() => handleChatEnter(item.author)}>
+            <TouchableOpacity style={styles.contactButton} onPress={() => handleChatEnter(item.author, item.authorName, currentUserName, item.itemName)}>
               <Text style={styles.contactText}>Contact Finder</Text>
             </TouchableOpacity>
           </Card>
@@ -191,6 +212,7 @@ const MatchingResults = ({navigation}: any) => {
           />
           <View style={rowStyle}>
             <TouchableOpacity style={buttonStyle} onPress={() => {
+
               if (firstMessage) {
                 navigation.dispatch(
                   CommonActions.reset({
@@ -202,6 +224,7 @@ const MatchingResults = ({navigation}: any) => {
                         params: {
                           recipientUser,
                           firstMessage,
+                          chatObject,
                         },
                       },
                     ],
@@ -230,9 +253,9 @@ const MatchingResults = ({navigation}: any) => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
+    backgroundColor: '#EFF1F8',
     marginTop: 5,
+    height: height,
   },
   innerContainer: {
     flexDirection: 'row',

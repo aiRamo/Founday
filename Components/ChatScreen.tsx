@@ -13,10 +13,18 @@ interface Message {
 }
 const RoomScreen = ({ navigation, route }: { navigation: any, route: any }) => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const { chatRoomID } = route.params;
+  const { recipientUser, firstMessage, chatObject } = route.params;
   const currentUserId = auth.currentUser?.uid;
 
-  const chatRoom = `chats/${chatRoomID}/messages`;
+  console.log("recipientUser:", recipientUser);
+
+  let chatRoom: string
+
+  if (recipientUser.includes('_')) {
+    chatRoom = `chats/${recipientUser}/messages`;
+  } else {
+    chatRoom = `chats/${recipientUser}_${currentUserId}/messages`;
+  }
 
   console.log("FIRST MESSAGE: " + firstMessage)
 
@@ -72,9 +80,16 @@ const RoomScreen = ({ navigation, route }: { navigation: any, route: any }) => {
       });
 
       var date = new Date();
-      firebase.database().ref('ChatRooms/' + chatRoomID)
-      .child("Time")
-      .set(date.getFullYear() + "/" + ("0" + (date.getMonth() + 1)).slice(-2) + "/" + ("0" + date.getDate()).slice(-2) + " " + ("0" + date.getHours() ).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2) + ":" + ("0" + date.getSeconds()).slice(-2));
+      firebase.database().ref('ChatRooms/' + `${recipientUser}_${currentUserId}`)
+      .set({
+        id: `${recipientUser}_${currentUserId}`, 
+        Loser: chatObject.loser, 
+        Finder: chatObject.finder, 
+        Item: chatObject.item, 
+        Time: date.getFullYear() + "/" + ("0" + (date.getMonth() + 1))
+          .slice(-2) + "/" + ("0" + date.getDate()).slice(-2) + " " + ("0" + date.getHours() )
+          .slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2) + ":" + ("0" + date.getSeconds()).slice(-2)
+      });
   }, []);
 
   return(

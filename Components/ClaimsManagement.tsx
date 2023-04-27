@@ -24,8 +24,8 @@ import { firebase, auth, firestore } from './firebaseConfig';
     });
   }, []);
 
-  const handleChatEnter = (chatRoomID: any) => {
-    navigation.navigate('Chat Room', {chatRoomID}); // chatRoomID is sent with the chat screen.tsx to implement 1 to 1 functionality. 
+  const handleChatEnter = (recipientUser: any) => {
+    navigation.navigate('Chat Room', {recipientUser}); // chatRoomID is sent with the chat screen.tsx to implement 1 to 1 functionality. 
   }
 
   return (
@@ -76,7 +76,7 @@ import { firebase, auth, firestore } from './firebaseConfig';
         .reverse()
         .map((chat) => (
         <View key={chat.email} style={styles.container}>
-          <Image source={{ uri: 'https://randomuser.me/api/portraits/men/1.jpg' }} style={styles.img} />
+          <Image source={require('../assets/defaultProfile.png')} style={styles.img} />
 
           {/* inner texts view*/}
           <View style={styles.innerContainer}>
@@ -138,6 +138,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginTop: 8,
     marginStart: 10,
+    backgroundColor: '#687089'
   },
   scrollView: {
     marginHorizontal: 3,
