@@ -3,6 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, Dimensions, Image, View } from 'rea
 import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { navigationRef } from './Components/RootNavigation';
 import Home from './Components/Home';
 import Login from './Components/Login';
 import Settings from './Components/Settings';
@@ -13,6 +14,7 @@ import ClaimsManagement from './Components/ClaimsManagement';
 import MatchingResults from './Components/MatchingResults';
 import ChatScreen from './Components/ChatScreen'
 import LostUploadScreen from './Components/LostReport';
+import EditItem from './Components/EditItem';
 import { firebase } from './Components/firebaseConfig';
 import {ref, onValue} from 'firebase/database';
 
@@ -45,7 +47,7 @@ const App = () => {
   }, []);
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
     <Stack.Navigator
       screenOptions={{
         headerStyle: styles.header,
@@ -89,6 +91,7 @@ const App = () => {
       />
       <Stack.Screen name="Lost Report" component={LostUploadScreen} options={{title: 'Lost Item Report'}}/>
       <Stack.Screen name="Found Report" component={FoundUploadScreen} options={{title: 'Found Item Report'}}/>
+      <Stack.Screen name="Edit Item" component={EditItem} options={{title: 'Edit Item Report'}}/>
       <Stack.Screen name="Sign Up" component={SignUp} options={{headerShown: false}}/>
       <Stack.Screen name="Forgot Password" component={ForgotPassword} options={{title: 'Reset Password'}}/>
       <Stack.Screen name="User Settings" component={Settings} options={{title: 'Settings'}}/>

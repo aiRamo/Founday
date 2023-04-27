@@ -4,6 +4,7 @@ import Card from './utilities/homepageCard';
 import { firebase } from './firebaseConfig';
 import {ref, onValue} from 'firebase/database';
 import { getMatchingFoundItems } from './utilities/serverless';
+import * as RootNavigation from './RootNavigation';
 
 const db = firebase.database()
 export let matchResults: any; // This is what we will use to store the matchResults (for the time being)
@@ -63,7 +64,10 @@ const Item = ({title, description, image, button, onPress, imageCategory}: any) 
     }
   }, [image]);
 
-  //deleteItem() deletes the firebase database entity, as well as the storage image.
+  // function to edit item
+  const editItem = () => {
+    RootNavigation.navigate('Edit Item')
+  }
 
   const deleteItem = () => {
     items.once('value', (snapshot) => {
@@ -121,6 +125,11 @@ const Item = ({title, description, image, button, onPress, imageCategory}: any) 
               <Image source = {require('../assets/trashBin.png')} style = {styles.trashImg}/>
             </TouchableOpacity>
 
+            {/* edit here*/}
+            <TouchableOpacity style = {styles.editView} onPress = {() => editItem}>
+              <Image source = {require('../assets/outline_edit_white_24.png')} style = {styles.editImg} />
+            </TouchableOpacity>
+
             <ConfirmDeleteModal
               visible={confirmVisible}
               onConfirm={() => {
@@ -140,6 +149,11 @@ const Item = ({title, description, image, button, onPress, imageCategory}: any) 
             <Text style={styles.title}>{title}</Text>
             <TouchableOpacity style = {styles.trashView} onPress = {() => setConfirmVisible(true)}>
               <Image source = {require('../assets/trashBin.png')} style = {styles.trashImg}/>
+            </TouchableOpacity>
+
+            {/* edit here*/}
+            <TouchableOpacity style = {styles.editView} onPress = {() => editItem}>
+              <Image source = {require('../assets/outline_edit_white_24.png')} style = {styles.editImg} />
             </TouchableOpacity>
 
             <ConfirmDeleteModal
@@ -315,6 +329,7 @@ const Home = ({navigation}: any) => {
     navigation.navigate('Claims');
   }
 
+
   
   return (
     <View style={styles.wrapper}>
@@ -450,6 +465,14 @@ const styles = StyleSheet.create({
   trashImg: {
     width: 50,
     height: 50,
+  },
+  editView: {
+
+  },
+  editImg: {
+    width: 35,
+    height: 35,
+    marginTop: 3,
   },
   cardHeader: {
     flexDirection: 'row',
