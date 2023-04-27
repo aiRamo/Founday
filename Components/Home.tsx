@@ -116,14 +116,16 @@ const Item = ({title, description, image, button, onPress, imageCategory}: any) 
         <ImageBackground source={{ uri: imageUrl }} style={styles.itemImage}>
           <View style = {styles.cardHeader}>
             <Text style={styles.title}>{title}</Text>
-            <TouchableOpacity style = {styles.trashView} onPress = {() => setConfirmVisible(true)}>
-              <Image source = {require('../assets/trashBin.png')} style = {styles.trashImg}/>
-            </TouchableOpacity>
+            <View style = {styles.headerButtonRow}>   
+              <TouchableOpacity style = {styles.trashView} onPress = {() => setConfirmVisible(true)}>
+                <Image source = {require('../assets/trashBin.png')} style = {styles.trashImg}/>
+              </TouchableOpacity>
 
-            {/* edit here*/}
-            <TouchableOpacity style = {styles.editView} onPress = {() => {RootNavigation.navigate('Edit Item', {userName: 'Lucy'})}}>
-              <Image source = {require('../assets/outline_edit_white_24.png')} style = {styles.editImg} />
-            </TouchableOpacity>
+              {/* edit here*/}
+              <TouchableOpacity style = {styles.editView} onPress = {() => {RootNavigation.navigate('Edit Item', {userName: 'Lucy'})}}>
+                <Image source = {require('../assets/outline_edit_white_24.png')} style = {styles.editImg} />
+              </TouchableOpacity>
+            </View>
 
             <ConfirmDeleteModal
               visible={confirmVisible}
@@ -142,14 +144,16 @@ const Item = ({title, description, image, button, onPress, imageCategory}: any) 
         <ImageBackground source={image} style={styles.itemImage}>
           <View style = {styles.cardHeader}>
             <Text style={styles.title}>{title}</Text>
-            <TouchableOpacity style = {styles.trashView} onPress = {() => setConfirmVisible(true)}>
-              <Image source = {require('../assets/trashBin.png')} style = {styles.trashImg}/>
-            </TouchableOpacity>
+            <View style = {styles.headerButtonRow}>
+              <TouchableOpacity style = {styles.trashView} onPress = {() => setConfirmVisible(true)}>
+                <Image source = {require('../assets/trashBin.png')} style = {styles.trashImg}/>
+              </TouchableOpacity>
 
-            {/* edit here*/}
-            <TouchableOpacity style = {styles.editView} onPress = {() => RootNavigation.navigate('Edit Item', {userName: 'Lucy'})}>
-              <Image source = {require('../assets/outline_edit_white_24.png')} style = {styles.editImg} />
-            </TouchableOpacity>
+              {/* edit here*/}
+              <TouchableOpacity style = {styles.editView} onPress = {() => RootNavigation.navigate('Edit Item', {userName: 'Lucy'})}>
+                <Image source = {require('../assets/outline_edit_white_24.png')} style = {styles.editImg} />
+              </TouchableOpacity>
+            </View>
 
             <ConfirmDeleteModal
               visible={confirmVisible}
@@ -462,7 +466,6 @@ const styles = StyleSheet.create({
     height: 50,
   },
   editView: {
-
   },
   editImg: {
     width: 35,
@@ -520,6 +523,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 12,
   },
+  headerButtonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  }
 });
 
 

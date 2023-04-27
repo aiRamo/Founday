@@ -169,9 +169,6 @@ const FoundUploadScreen = ({navigation}) => {
 
         try {
             await ref;
-            alert(
-              'Photo Uploaded!'
-            );
         } catch (e) {
           console.log(e);
         }
