@@ -3,6 +3,7 @@ import React, {useState, useCallback, useEffect} from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { firebase } from './firebaseConfig';
+import {ref, onValue} from 'firebase/database';
 import SelectDropdown from 'react-native-select-dropdown';
 import { DatePickerModal, TimePickerModal } from "react-native-paper-dates";
 
@@ -125,6 +126,8 @@ const EditItem = ({navigation}) => {
 
     //TODO: when user hits button, upload attributes + filename of image to LostItems/<LostItemUniqueKey>
     // The atributes to import are author(uid), category, date, description, image(filename or N/A if no image), itemName(title)
+
+    const db = firebase.database()
 
     const uploadItem = async () => {
       
@@ -372,7 +375,7 @@ const EditItem = ({navigation}) => {
             <View>
                 <TouchableOpacity style={styles.uploadButton} onPress={uploadItem}>
                     <Text style={styles.buttonText}>
-                        Upload Item
+                        Update Item
                     </Text>
                 </TouchableOpacity>
             </View>

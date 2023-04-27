@@ -64,11 +64,6 @@ const Item = ({title, description, image, button, onPress, imageCategory}: any) 
     }
   }, [image]);
 
-  // function to edit item
-  const editItem = () => {
-    RootNavigation.navigate('Edit Item')
-  }
-
   const deleteItem = () => {
     items.once('value', (snapshot) => {
       snapshot.forEach((childSnapshot) => {
@@ -126,7 +121,7 @@ const Item = ({title, description, image, button, onPress, imageCategory}: any) 
             </TouchableOpacity>
 
             {/* edit here*/}
-            <TouchableOpacity style = {styles.editView} onPress = {() => editItem}>
+            <TouchableOpacity style = {styles.editView} onPress = {() => {RootNavigation.navigate('Edit Item', {userName: 'Lucy'})}}>
               <Image source = {require('../assets/outline_edit_white_24.png')} style = {styles.editImg} />
             </TouchableOpacity>
 
@@ -152,7 +147,7 @@ const Item = ({title, description, image, button, onPress, imageCategory}: any) 
             </TouchableOpacity>
 
             {/* edit here*/}
-            <TouchableOpacity style = {styles.editView} onPress = {() => editItem}>
+            <TouchableOpacity style = {styles.editView} onPress = {() => RootNavigation.navigate('Edit Item', {userName: 'Lucy'})}>
               <Image source = {require('../assets/outline_edit_white_24.png')} style = {styles.editImg} />
             </TouchableOpacity>
 
